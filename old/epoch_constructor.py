@@ -57,7 +57,8 @@ class EpochGenerator:
                                  verbose=False, detrend=0, preload=True)
     
     def compute(self):
-        self._import_data()
+        self._
+        import_data()
         self._filter_data()
         self._build_epochs_evoked()
         self._create_epochs()
