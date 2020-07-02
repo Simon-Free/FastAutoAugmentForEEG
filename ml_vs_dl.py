@@ -27,11 +27,11 @@ from braindecode.datasets import create_from_mne_epochs
 mne.set_log_level("warning")
 
 
-def get_epochs_data():
+def get_epochs_data(train_subjects=list(range(15)), test_subjects=list(range(15, 20))):
     ALICE, BOB = 0, 1
 #     [alice_files, bob_files] = fetch_data(subjects=[ALICE, BOB], recording=[1])
-    train_files_list = fetch_data(subjects=list(range(15)))
-    test_files_list = fetch_data(subjects=list(range(15,20)))
+    train_files_list = fetch_data(subjects=train_subjects)
+    test_files_list = fetch_data(subjects=test_subjects)
     mapping = {'EOG horizontal': 'eog',
                'Resp oro-nasal': 'misc',
                'EMG submental': 'misc',

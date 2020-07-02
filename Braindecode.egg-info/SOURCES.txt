@@ -1,0 +1,7 @@
+README.md
+Braindecode.egg-info/PKG-INFO
+Braindecode.egg-info/SOURCES.txt
+Braindecode.egg-info/dependency_links.txt
+Braindecode.egg-info/not-zip-safe
+Braindecode.egg-info/requires.txt
+Braindecode.egg-info/top_level.txt
