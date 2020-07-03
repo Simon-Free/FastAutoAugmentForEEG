@@ -1,7 +1,6 @@
-import matplotlib.pyplot as plt
-cachedir = 'cache_dir'
 from joblib import Memory
-from braindecode.datasets import WindowsDataset
+import mne
+cachedir = 'cache_dir'
 memory = Memory(cachedir, verbose=0)
 
 @memory.cache
@@ -69,21 +68,25 @@ def get_epochs_data(train_subjects=list(range(15)), test_subjects=list(range(15,
 
     return train_sample, test_sample
 
+
 class TransformDataset(WindowsDataset):
+
     def __init__(self, windows, description=None, transform_list=[lambda x: x]):
         super().__init__(self, windows, description=None)
         self.transform_list = transform_list
         self.len_tf_list = len(transform_list)
+
     def __getitem__(self, index):
-        X = self.windows.get_data(item=index)[0].astype('float32')
-        y = self.y[index]
+        
         img_index = index // self.len_tf_list
         tf_index = index % self.len_tf_list
+        X = self.windows.get_data(item=img_index)[0].astype('float32')
+        y = self.y[index]
         X = self.transform_list[tf_index](X)
         # necessary to cast as list to get list of
         # three tensors from batch, otherwise get single 2d-tensor...
         crop_inds = list(self.crop_inds[index])
         return X, y, crop_inds
+
     def __len__(self):
         return len(self.windows.events)*len(self.transform_list)
-

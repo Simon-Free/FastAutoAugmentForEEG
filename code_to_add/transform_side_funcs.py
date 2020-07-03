@@ -1,18 +1,23 @@
+import torch
+
+
 def mask_along_axis(
         specgram,
         mask_start: int,
         mask_end: int,
         mask_value: float,
-        axis: int
-):
+        axis: int):
     r"""
-    Apply a mask along ``axis``. Mask will be applied from indices ``[v_0, v_0 + v)``, where
-    ``v`` is sampled from ``uniform(0, mask_param)``, and ``v_0`` from ``uniform(0, max_v - v)``.
+    Apply a mask along ``axis``. Mask will be applied from indices
+    ``[v_0, v_0 + v)``, where
+    ``v`` is sampled from ``uniform(0, mask_param)``,
+    and ``v_0`` from ``uniform(0, max_v - v)``.
     All examples will have the same mask interval.
 
     Args:
         specgram (Tensor): Real spectrogram (channel, freq, time)
-        mask_param (int): Number of columns to be masked will be uniformly sampled from [0, mask_param]
+        mask_param (int): Number of columns to be masked will be
+        uniformly sampled from [0, mask_param]
         mask_value (float): Value to assign to the masked columns
         axis (int): Axis to apply masking on (1 -> frequency, 2 -> time)
 
@@ -20,10 +25,9 @@ def mask_along_axis(
         Tensor: Masked spectrogram of dimensions (channel, freq, time)
     """
 
-    
     mask_start = (torch.tensor(mask_start).long()).squeeze()
     mask_end = (torch.tensor(mask_end).long()).squeeze()
-    
+
     if axis == 1:
         specgram[:, mask_start:mask_end, :, :] = mask_value
     elif axis == 2:
@@ -35,22 +39,52 @@ def mask_along_axis(
 
     return specgram
 
-class Policy:
 
-    def __init__(self, policy_type: str, args):
-        self.policy_type = policy_type
-        self.args = args
+class TransformFFT:
 
-    def apply(self, spectrogram):
-        if self.policy_type == "axis_mask":
-            return(mask_along_axis(spectrogram, self.args["mask_start"], self.args["mask_end"], self.args["mask_value"], self.args["axis"]))
+    def __init__(self, policy, fft_args):
+        self.policy = policy
+        self.n_fft = fft_args.fft
+        self.hop_length = fft_args.hop_length
+        self.win_length = fft_args.win_length
+
+    def fit(self, X):
+        pass
+
+    def transform(self, X):
+        if not (len(X.shape) == 4):
+            # (len(X.shape) == 4) characterizes the
+            # spectrogramm of an epoch with several
+            # channels.
+            X = torch.stft(X, n_fft=self.n_fft,
+                           hop_length=self.hop_length,
+                           win_length=self.win_length,
+                           window=torch.hann_window(self.n_fft))
+
+        return self.policy(X)
         # if type = "axis_warp":
         #    return(warp_along_axis())
-        
-args= {"mask_start": 10,
-       "mask_end": 40,
-       "mask_value": 1,
-       "axis": 2}
-policy_type = "axis_mask"
-policy = Policy(policy_type, args)
-spec = transform(test, [policy])
+
+
+class TransformSignal:
+
+    def __init__(self, policy, fft_args): #TODO, construire un fft_args vanille
+        self.policy = policy
+        self.n_fft = fft_args.fft
+        self.hop_length = fft_args.hop_length
+        self.win_length = fft_args.win_length
+
+    def fit(self, X):
+        pass
+
+    def transform(self, X):
+        if (len(X.shape) == 4):
+            X = torch.istft(X,
+                            n_fft=self.n_fft,
+                            hop_length=self.hop_length,
+                            win_length=self.n_fft,
+                            window=torch.hann_window(self.n_fft))
+        return self.policy(X)
+    
+    
+

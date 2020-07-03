@@ -6,20 +6,28 @@ def transform_masking(window, policy_list):
                                   hop_length=hop_length,
                                   win_length=n_fft,
                                   window=torch.hann_window(n_fft))
-    
+
     for policy in policy_list:
         spectrogram = policy.apply(spectrogram)
-        
+
     to_plot = torch.norm(spectrogram, dim=3)
     to_plot = torchaudio.transforms.AmplitudeToDB().forward(to_plot)
-    
-    
+
+
     tensor_to_img(to_plot)
     augmented_window = torchaudio.functional.istft(spectrogram,    
                                                    n_fft=n_fft,
                                                    hop_length=hop_length,
                                                    win_length=n_fft,
                                                    window=torch.hann_window(n_fft))
-    
+
     return(spectrogram)
 
+
+args= {"mask_start": 10,
+       "mask_end": 40,
+       "mask_value": 1,
+       "axis": 2}
+policy_type = "axis_mask"
+policy = Policy(policy_type, args)
+spec = transform(test, [policy])

@@ -1,9 +1,10 @@
 # Transformer un dataset en truc utilisable
-# La fonction c'est 
+# La fonction c'est
 import matplotlib.pyplot as plt
-cachedir = 'cache_dir'
 from joblib import Memory
+cachedir = 'cache_dir'
 memory = Memory(cachedir, verbose=0)
+
 
 @memory.cache
 def compute_experimental_result(model_args, dataset_args):
@@ -12,6 +13,7 @@ def compute_experimental_result(model_args, dataset_args):
     model.fit(train_dataset)
     score = package.get_score(model, test_dataset)
     return score
+
 
 def plot_result(model_args_list, dataset_args_list):
     result_dict = {}
