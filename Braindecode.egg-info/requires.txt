@@ -1,7 +1,0 @@
-mne
-numpy
-pandas
-scipy
-matplotlib
-h5py
-skorch

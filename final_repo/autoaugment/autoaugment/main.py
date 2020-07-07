@@ -15,3 +15,5 @@ def main_compute():
             result_dict[key] = {}
         result_dict[key][sample_size] = score
     plot_result(result_dict)
+
+    

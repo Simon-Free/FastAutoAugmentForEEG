@@ -1,5 +1,5 @@
 .ipynb_checkpoints
-.ipynb
+*.ipynb
 .vscode
-Braindecode.egg-info
+*.egg-info
 __pycache__

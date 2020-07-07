@@ -1,6 +1,11 @@
+import torch
+
+
 class TransformFFT:
 
-    def __init__(self, policy, fft_args):
+    def __init__(self, policy,
+                 fft_args={"n_fft": 512, "hop_length": 256,
+                           "win_length": 512}):
         self.policy = policy
         self.n_fft = fft_args.fft
         self.hop_length = fft_args.hop_length
@@ -26,9 +31,11 @@ class TransformFFT:
 
 class TransformSignal:
 
-    def __init__(self, policy, fft_args): #TODO, construire un fft_args vanille
+    def __init__(self, policy,
+                 fft_args={"n_fft": 512, "hop_length": 256,
+                           "win_length": 512}):
         self.policy = policy
-        self.n_fft = fft_args.fft
+        self.n_fft = fft_args.n_fft
         self.hop_length = fft_args.hop_length
         self.win_length = fft_args.win_length
 
