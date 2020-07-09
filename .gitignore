@@ -3,8 +3,4 @@
 .vscode
 *.egg-info
 __pycache__
-<<<<<<< HEAD
 */cache_dir
-=======
-cache_dir/
->>>>>>> 395f035... update .gitignore

@@ -1,3 +1,4 @@
+import dill
 from joblib import Memory
 from .models.model_main_funcs import initialize_model, get_score
 from .retrieve_data import get_sample
@@ -13,8 +14,11 @@ def compute_experimental_result(model_args,
 
     score_list = []
     for i in range(10):
+        train_subset = get_sample(model_args, train_dataset, sample_size)
         model = initialize_model(model_args, test_dataset)
-        train_subset = get_sample(train_dataset, sample_size)
-        model.fit(train_subset)
+        model.fit(train_subset, y=None)
         score_list.append[get_score(model)]
     return score_list
+
+
+

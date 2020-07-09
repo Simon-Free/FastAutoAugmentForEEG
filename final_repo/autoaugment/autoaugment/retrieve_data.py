@@ -4,16 +4,16 @@ from mne.datasets.sleep_physionet.age import fetch_data
 from braindecode.datasets import create_from_mne_epochs
 import numpy as np
 import torch
-
+from torch.utils.data import Subset
 cachedir = 'cache_dir'
 memory = Memory(cachedir, verbose=0)
 
 
 @memory.cache
 def get_epochs_data(train_subjects=list(range(15)),
-                    test_subjects=list(range(15, 20))):
-    train_files_list = fetch_data(subjects=train_subjects)
-    test_files_list = fetch_data(subjects=test_subjects)
+                    test_subjects=list(range(15, 20)), recording=[1, 2]):
+    train_files_list = fetch_data(subjects=train_subjects, recording=recording)
+    test_files_list = fetch_data(subjects=test_subjects, recording=recording)
     mapping = {'EOG horizontal': 'eog',
                'Resp oro-nasal': 'misc',
                'EMG submental': 'misc',
@@ -44,10 +44,9 @@ def get_epochs_data(train_subjects=list(range(15)),
         tmax = 30. - 1. / raw_train.info['sfreq']
         epochs_train = mne.Epochs(raw=raw_train, events=events_train,
                                   event_id=event_id, tmin=0., tmax=tmax,
-                                  baseline=None)
+                                  baseline=None).load_data()
         epochs_train.drop_bad()
         epochs_train_list.append(epochs_train)
-
     for subj_files in test_files_list:
         raw_test = mne.io.read_raw_edf(subj_files[0])
         annot_test = mne.read_annotations(subj_files[1])
@@ -57,7 +56,8 @@ def get_epochs_data(train_subjects=list(range(15)),
             raw_test, event_id=annotation_desc_2_event_id, chunk_duration=30.)
         epochs_test = mne.Epochs(raw=raw_test, events=events_test,
                                  event_id=event_id,
-                                 tmin=0., tmax=tmax, baseline=None)
+                                 tmin=0., tmax=tmax, baseline=None).load_data()
+        
         epochs_test.drop_bad()
         epochs_test_list.append(epochs_test)
 
@@ -66,6 +66,9 @@ def get_epochs_data(train_subjects=list(range(15)),
         window_size_samples=3000,
         window_stride_samples=3000,
         drop_last_window=False)
+    # import ipdb; ipdb.set_trace()
+#    train_sample.cumulative_sizes()
+
     test_sample = create_from_mne_epochs(
         epochs_test_list, window_size_samples=3000,
         window_stride_samples=3000,
@@ -77,7 +80,7 @@ def get_epochs_data(train_subjects=list(range(15)),
 def get_sample(model_args, train_dataset, sample_size):
     tf_list_len = len(train_dataset.transform_list)
     subset_sample = np.random.choice(
-        range(len(train_dataset)/len(train_dataset.transform_list)), 
+        range(int(len(train_dataset)/len(train_dataset.transform_list))),
         size=int(sample_size *
                  len(train_dataset) /
                  len(train_dataset.transform_list)),
@@ -87,9 +90,8 @@ def get_sample(model_args, train_dataset, sample_size):
             [i*tf_list_len + j for j in range(tf_list_len)]
             )
          for i in subset_sample]).flatten()
-    subset_loader = torch.utils.data.DataLoader(
-        train_dataset,
-        batch_size=model_args["batch_size"],
-        shuffle=True,
-        sampler=torch.utils.data.SubsetRandomSampler(subset_aug_sample))
-    return(subset_loader)
+
+    train_subset = Subset(
+        dataset=train_dataset,
+        indices=subset_aug_sample)
+    return train_subset
