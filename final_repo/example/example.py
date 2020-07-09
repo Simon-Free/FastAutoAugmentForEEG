@@ -6,8 +6,7 @@ mne.set_log_level("WARNING")
 
 
 if __name__ == "__main__":
-    train_sample, test_sample = get_epochs_data(train_subjects=[0],
-                                                test_subjects=[1])
+    train_sample, test_sample = get_epochs_data()
     dataset_args = {"transform_type": "raw (no transforms)"}
     sample_size = 0.1
     model_args = {"model_type": "ShallowFBCSPNet",
