@@ -17,7 +17,7 @@ def compute_experimental_result(model_args,
         train_subset = get_sample(model_args, train_dataset, sample_size)
         model = initialize_model(model_args, test_dataset)
         model.fit(train_subset, y=None)
-        score_list.append[get_score(model)]
+        score_list.append(get_score(model))
     return score_list
 
 

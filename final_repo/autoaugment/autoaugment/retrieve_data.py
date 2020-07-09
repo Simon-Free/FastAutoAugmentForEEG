@@ -92,6 +92,6 @@ def get_sample(model_args, train_dataset, sample_size):
          for i in subset_sample]).flatten()
 
     train_subset = Subset(
-        dataset=train_dataset,
-        indices=subset_aug_sample)
+       dataset=train_dataset,
+       indices=subset_aug_sample)
     return train_subset
