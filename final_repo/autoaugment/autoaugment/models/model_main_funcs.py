@@ -18,4 +18,4 @@ def get_score(clf):
     df = pd.DataFrame(clf.history[:, results_columns],
                       columns=results_columns,
                       index=clf.history[:, 'epoch'])
-    return(df.tail(1)['valid_accuracy'])
+    return(df.tail(1)['valid_accuracy'].values[0])
