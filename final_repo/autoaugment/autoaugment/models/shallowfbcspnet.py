@@ -20,7 +20,7 @@ def get_shallowfbcspnet(model_args, test_sample):
 
     model = ShallowFBCSPNet(
         model_args["n_chans"],
-        model_args["n_classes"],
+        model_args["n_classes"]+1,
         input_window_samples=model_args["input_window_samples"],
         final_conv_length='auto',
         )

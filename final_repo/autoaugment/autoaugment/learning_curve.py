@@ -2,18 +2,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 import statistics
 import seaborn as sns
+import pickle
+import os
 
 
-def plot_result(result_dict, save_name):
+def plot_result(saving_params, save_name):
+
+    abs_result_dict_path = os.path.join(saving_params["folder"],
+                                        saving_params["file_name"])
+    with open(abs_result_dict_path, 'rb') as handle:
+        result_dict = pickle.load(handle)
+
     with sns.axes_style("darkgrid"):
         fig, ax = plt.subplots()
         clrs = sns.color_palette("husl", len(result_dict))
-        import ipdb; ipdb.set_trace()
         for i in range(len(list(result_dict.keys()))):
             sorted_result = result_dict[list(result_dict.keys())[i]]
             sample_size = list(sorted_result.keys())
             test_mean = [statistics.mean(result_list)
-                            for result_list in sorted_result.values()]
+                         for result_list in sorted_result.values()]
             test_std = [statistics.stdev(result_list)
                         for result_list in sorted_result.values()]
             ax.plot(list(sample_size), test_mean,

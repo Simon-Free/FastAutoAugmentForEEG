@@ -1,10 +1,13 @@
 from .compute_model import compute_experimental_result
+from pathlib import Path
+import pickle
+import os
 
 
 def main_compute(model_args_list, dataset_args_list, train_dataset,
-                 test_dataset, sample_size_list):
+                 test_dataset, sample_size_list, saving_params):
     """Train every models given in entry, on their associated dataset.
-    Return their validation accuracy on the test_dataset. 
+    Return their validation accuracy on the test_dataset.
 
     Parameters
     ----------
@@ -12,7 +15,7 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
         contains all informations needed for model creation and training,
         keys needed depends of the model.
     dataset_args_list: dict
-        
+
     window_stride_samples: int
         stride between windows
     drop_last_window: bool
@@ -25,8 +28,16 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
         X and y transformed to a dataset format that is compatible with skorch
         and braindecode
     """
-    
-    result_dict = {}
+
+    Path(saving_params["folder"]).mkdir(parents=True, exist_ok=True)
+    abs_result_dict_path = os.path.join(saving_params["folder"],
+                                        saving_params["file_name"])
+    try:
+        with open(abs_result_dict_path, 'rb') as handle:
+            result_dict = pickle.load(handle)
+    except FileNotFoundError:
+        result_dict = {}
+
     for i in range(len(model_args_list)):
         model_args = model_args_list[i]
         dataset_args = dataset_args_list[i]
@@ -40,6 +51,6 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
             if key not in result_dict.keys():
                 result_dict[key] = {}
             result_dict[key][sample_size] = score
-    return(result_dict)
 
-
+    with open(abs_result_dict_path, 'wb') as handle:
+        pickle.dump(result_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)

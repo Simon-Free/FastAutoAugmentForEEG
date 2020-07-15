@@ -1,17 +1,15 @@
-from joblib import Memory
 import mne
 from mne.datasets.sleep_physionet.age import fetch_data
 from braindecode.datasets import create_from_mne_epochs
 import numpy as np
-import torch
 from torch.utils.data import Subset
+from joblib import Memory
 cachedir = 'cache_dir'
 memory = Memory(cachedir, verbose=0)
 
 
-@memory.cache
 def get_epochs_data(train_subjects=list(range(15)),
-                    test_subjects=list(range(15, 20)), recording=[1, 2]):
+                    test_subjects=list(range(15, 20)), recording=[1, 2], dummy=False):
     train_files_list = fetch_data(subjects=train_subjects, recording=recording)
     test_files_list = fetch_data(subjects=test_subjects, recording=recording)
     mapping = {'EOG horizontal': 'eog',
@@ -61,25 +59,41 @@ def get_epochs_data(train_subjects=list(range(15)),
         epochs_test.drop_bad()
         epochs_test_list.append(epochs_test)
 
-    train_sample = create_from_mne_epochs(
-        epochs_train_list,
-        window_size_samples=3000,
-        window_stride_samples=3000,
-        drop_last_window=False)
-    # import ipdb; ipdb.set_trace()
-#    train_sample.cumulative_sizes()
+    if dummy:
+        train_sample = create_from_mne_epochs(
+            epochs_train_list,
+            window_size_samples=3000,
+            window_stride_samples=3000,
+            drop_last_window=False)
+        # import ipdb; ipdb.set_trace()
+    #    train_sample.cumulative_sizes()
 
-    test_sample = create_from_mne_epochs(
-        epochs_test_list, window_size_samples=3000,
-        window_stride_samples=3000,
-        drop_last_window=False)
+        test_sample = create_from_mne_epochs(
+            epochs_test_list, window_size_samples=3000,
+            window_stride_samples=3000,
+            drop_last_window=False)
+    
+    else:
+        train_sample = create_from_mne_epochs(
+            epochs_train_list,
+            window_size_samples=3000,
+            window_stride_samples=3000,
+            drop_last_window=False)
+        # import ipdb; ipdb.set_trace()
+    #    train_sample.cumulative_sizes()
+
+        test_sample = create_from_mne_epochs(
+            epochs_test_list, window_size_samples=3000,
+            window_stride_samples=3000,
+            drop_last_window=False)
 
     return train_sample, test_sample
 
 
-def get_sample(model_args, train_dataset, sample_size):
+def get_sample(model_args, train_dataset, sample_size, random_state=None):
+    rng = np.random.RandomState(random_state)
     tf_list_len = len(train_dataset.transform_list)
-    subset_sample = np.random.choice(
+    subset_sample = rng.choice(
         range(int(len(train_dataset)/len(train_dataset.transform_list))),
         size=int(sample_size *
                  len(train_dataset) /
@@ -95,3 +109,28 @@ def get_sample(model_args, train_dataset, sample_size):
        dataset=train_dataset,
        indices=subset_aug_sample)
     return train_subset
+
+
+@memory.cache
+def get_dummy_sample():
+    train_sample, test_sample = get_epochs_data(
+        train_subjects=[0],
+        test_subjects=[1],
+        recording=[1], dummy=True)
+    # for i in range(len(train_sample)):
+    #     train_sample[i] = (train_sample[i][0][:50], train_sample[i][1],
+    #                        train_sample[i][2])
+    # for i in range(len(test_sample)):
+    #     test_sample[i] = (test_sample[i][0][:50], 
+    #                       test_sample[i][1], test_sample[i][2])
+    test_choice = np.random.choice(
+        range(len(test_sample)),
+        size=2,
+        replace=False)
+    sub_train_sample = Subset(train_sample, [350, 1029, 1291, 1650, 1571])
+    sub_train_sample.transform_list = train_sample.transform_list
+    sub_test_sample = Subset(test_sample, test_choice)
+    sub_test_sample.transform_list = test_sample.transform_list
+
+    return sub_train_sample, sub_test_sample
+

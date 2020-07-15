@@ -1,5 +1,8 @@
 import pandas as pd
 from .shallowfbcspnet import get_shallowfbcspnet
+from joblib import Memory
+cachedir = 'cache_dir'
+memory = Memory(cachedir, verbose=0)
 
 
 def initialize_model(model_args, test_dataset):
@@ -12,6 +15,7 @@ def initialize_model(model_args, test_dataset):
         return(None)
 
 
+# @memory.cache
 def get_score(clf):
     results_columns = ['train_loss', 'valid_loss',
                        'train_accuracy', 'valid_accuracy']
