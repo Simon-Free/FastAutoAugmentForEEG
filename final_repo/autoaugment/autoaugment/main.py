@@ -38,9 +38,7 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
     except FileNotFoundError:
         result_dict = {}
 
-    for i in range(len(model_args_list)):
-        model_args = model_args_list[i]
-        dataset_args = dataset_args_list[i]
+    for model_args, dataset_args in zip(model_args_list, dataset_args_list):
         key = (model_args["model_type"] + " + "
                + dataset_args["transform_type"])
         for sample_size in sample_size_list:
@@ -54,3 +52,4 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
 
     with open(abs_result_dict_path, 'wb') as handle:
         pickle.dump(result_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+

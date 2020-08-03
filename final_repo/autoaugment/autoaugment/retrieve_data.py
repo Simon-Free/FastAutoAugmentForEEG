@@ -1,8 +1,9 @@
 import mne
 from mne.datasets.sleep_physionet.age import fetch_data
+from braindecode.datasets import BaseConcatDataset
 from braindecode.datasets import create_from_mne_epochs
 import numpy as np
-from torch.utils.data import Subset
+from torch.utils.data import Subset, ConcatDataset
 from joblib import Memory
 cachedir = 'cache_dir'
 memory = Memory(cachedir, verbose=0)
@@ -127,10 +128,27 @@ def get_dummy_sample():
         range(len(test_sample)),
         size=2,
         replace=False)
-    sub_train_sample = Subset(train_sample, [350, 1029, 1291, 1650, 1571])
-    sub_train_sample.transform_list = train_sample.transform_list
-    sub_test_sample = Subset(test_sample, test_choice)
-    sub_test_sample.transform_list = test_sample.transform_list
+    print(test_choice)
+    train_sample.datasets = [train_sample.datasets[350],
+                             train_sample.datasets[1029],
+                             train_sample.datasets[1291],
+                             train_sample.datasets[1650],
+                             train_sample.datasets[1571]]
+    train_sample.description = train_sample.description.loc[[0, 1, 2, 3, 4]]
+    train_sample.cumulative_sizes = train_sample.cumulative_sizes[:5]
 
-    return sub_train_sample, sub_test_sample
+    test_sample.datasets = [test_sample.datasets[test_choice[0]],
+                            test_sample.datasets[test_choice[1]]]
+    test_sample.description = test_sample.description.loc[[0, 1, 2, 3, 4]]
+    test_sample.cumulative_sizes = test_sample.cumulative_sizes[:2]
+    # sub_train_sample = Subset(train_sample, [350, 1029, 1291, 1650, 1571])
+    train_sample.transform_list = train_sample.transform_list
+    # sub_test_sample = Subset(test_sample, test_choice)
+    test_sample.transform_list = test_sample.transform_list
 
+    return train_sample, test_sample
+
+    # TODO Assert getitem sur GPU.
+    # TODO Trouver autre solution subset.
+    # TODO np.array(list(dataset))
+    # TODO mne-tools/mne-features

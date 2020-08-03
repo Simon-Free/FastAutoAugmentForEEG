@@ -33,7 +33,7 @@ def get_shallowfbcspnet(model_args, test_sample):
     # lr = 1 * 0.01
     # weight_decay = 0.5 * 0.001
     n_epochs = model_args["n_epochs"]  # = 100
-    batch_size = model_args["batch_size"]  # = 64
+    batch_size = model_args["batch_size"]  # = F
 
     clf = EEGClassifier(
         model,
