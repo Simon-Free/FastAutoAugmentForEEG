@@ -12,7 +12,7 @@ def get_shallowfbcspnet(model_args, test_sample):
     device = 'cuda' if cuda else 'cpu'
     if cuda:
         torch.backends.cudnn.benchmark = True
-    seed = model_args["seed"]  
+    seed = model_args["seed"]
     # = 20200220  random seed to make results reproducible
     # Set random seed to be able to reproduce results
     if seed:

@@ -10,7 +10,8 @@ memory = Memory(cachedir, verbose=0)
 
 
 def get_epochs_data(train_subjects=list(range(15)),
-                    test_subjects=list(range(15, 20)), recording=[1, 2], dummy=False):
+                    test_subjects=list(range(15, 20)), recording=[1, 2], 
+                    dummy=False):
     train_files_list = fetch_data(subjects=train_subjects, recording=recording)
     test_files_list = fetch_data(subjects=test_subjects, recording=recording)
     mapping = {'EOG horizontal': 'eog',
