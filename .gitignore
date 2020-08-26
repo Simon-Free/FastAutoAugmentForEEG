@@ -1,6 +1,7 @@
-.ipynb_checkpoints
+*.ipynb_checkpoints
 *.ipynb
-.vscode
+*.vscode
 *.egg-info
 __pycache__
 */cache_dir
+old/*
