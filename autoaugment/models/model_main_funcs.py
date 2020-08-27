@@ -52,5 +52,4 @@ def get_score(clf, model_args, test_dataset):
             test_dataset[i][1] for i
             in range(len(test_dataset))])
     acc = accuracy_score(y_test, y_pred)
-    print(acc)
     return(acc)

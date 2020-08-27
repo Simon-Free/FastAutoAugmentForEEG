@@ -4,14 +4,15 @@ from .retrieve_data import get_sample
 
 
 def compute_experimental_result(model_args,
+                                dataset_args,
                                 train_dataset,
                                 test_dataset,
                                 sample_size):
-
+                                
+    train_dataset.change_transform_list(dataset_args["transform_list"])
     score_list = []
     for i in range(model_args["n_cross_val"]):
-        train_subset = get_sample(model_args,
-                                  train_dataset,
+        train_subset = get_sample(train_dataset,
                                   sample_size,
                                   random_state=i)
         model = initialize_model(model_args)

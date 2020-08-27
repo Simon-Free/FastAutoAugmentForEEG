@@ -92,7 +92,7 @@ def get_epochs_data(train_subjects=list(range(15)),
     return train_sample, test_sample
 
 
-def get_sample(model_args, train_dataset, sample_size, random_state=None):
+def get_sample(train_dataset, sample_size, random_state=None):
     rng = np.random.RandomState(random_state)
     tf_list_len = len(train_dataset.transform_list)
     subset_sample = rng.choice(
@@ -106,7 +106,6 @@ def get_sample(model_args, train_dataset, sample_size, random_state=None):
             [i*tf_list_len + j for j in range(tf_list_len)]
             )
          for i in subset_sample]).flatten()
-
     train_subset = Subset(
        dataset=train_dataset,
        indices=subset_aug_sample)
@@ -129,7 +128,6 @@ def get_dummy_sample():
         range(len(test_sample)),
         size=2,
         replace=False)
-    print(test_choice)
     train_sample.datasets = [train_sample.datasets[350],
                              train_sample.datasets[1029],
                              train_sample.datasets[1291],

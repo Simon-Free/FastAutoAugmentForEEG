@@ -1,7 +1,8 @@
 from autoaugment.retrieve_data import get_dummy_sample
-from autoaugment.main import main_compute
+from autoaugment.compute_all import main_compute
 from autoaugment.learning_curve import plot_result
 from autoaugment.transforms.identity import identity, identity_ml
+from autoaugment.transforms.masking import mask_along_axis_random
 from braindecode.datasets.transform_classes import TransformSignal, TransformFFT
 import mne
 mne.set_log_level("WARNING")
@@ -9,8 +10,16 @@ mne.set_log_level("WARNING")
 
 def dummy_test_shallownet():
     train_sample, test_sample = get_dummy_sample()
+
+    params_masking = {"mask_value": 0.0,
+                      "mask_param": 10,
+                      "axis": 2}
     dataset_args = {"transform_type": "raw (no transforms)",
-                    "transform_list": [[TransformSignal(identity)]]}
+                    "transform_list": [
+                        [TransformSignal(identity)],
+                        [TransformFFT(mask_along_axis_random, params_masking),
+                         TransformSignal(identity)]]}
+
     model_args = {"model_type": "ShallowFBCSPNet",
                   "batch_size": 64,
                   "seed": None,
@@ -22,7 +31,9 @@ def dummy_test_shallownet():
                   "n_cross_val": 3,
                   "n_chans": int(train_sample[0][0].shape[0]),
                   "input_window_samples": int(train_sample[0][0].shape[1]),
-                  "try": "bar"}
+                  "try": "bar",
+                  "train_split": None,
+                  }
 
     saving_params = {"file_name": "dummy_dict",
                      "folder": "/storage/store/work/sfreybur/result_folder/"}
@@ -54,7 +65,7 @@ def full_test():
 
     train_sample, test_sample = get_dummy_sample()
     dataset_args = {"transform_type": "raw (no transforms)",
-                    "transform_list": [[TransformSignal(identity)]]}
+                    "transform_list": [[TransformFFT(identity)]]}
     dl_args = {"model_type": "ShallowFBCSPNet",
                "batch_size": 64,
                "seed": None,
@@ -76,9 +87,9 @@ def full_test():
 
     sample_size_list = [1]
     main_compute([hf_args, dl_args], [dataset_args, dataset_args],
-                 train_sample, test_sample,
-                 sample_size_list, saving_params)
+                  train_sample, test_sample,
+                  sample_size_list, saving_params)
 
 
 if __name__ == "__main__":
-    full_test()
+    dummy_test_shallownet()
