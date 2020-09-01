@@ -2,6 +2,9 @@ from autoaugment.retrieve_data import get_dummy_sample
 from autoaugment.main import main_compute
 from autoaugment.learning_curve import plot_result
 from autoaugment.transforms.identity import identity, identity_ml
+from autoaugment.config import params_masking, dataset_args,\
+     shallow_args, saving_params, hf_args, sample_size_list
+
 from braindecode.datasets.transform_classes import TransformSignal, TransformFFT
 import mne
 mne.set_log_level("WARNING")
@@ -48,7 +51,7 @@ def dummy_test_handcrafted_features():
     main_compute([model_args], [dataset_args],
                  train_sample, test_sample,
                  sample_size_list, saving_params)
-    
+
 
 def full_test():
 
@@ -78,7 +81,6 @@ def full_test():
     main_compute([hf_args, dl_args], [dataset_args, dataset_args],
                  train_sample, test_sample,
                  sample_size_list, saving_params)
-
-
+    # Search : plus jamais "sfreybur"
 if __name__ == "__main__":
     full_test()
