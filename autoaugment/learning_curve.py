@@ -1,15 +1,17 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import statistics
-import seaborn as sns
-import pickle
 import os
+from pathlib import Path
+import numpy as np
+import pickle
+import statistics
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def plot_result(saving_params, save_name):
 
-    abs_result_dict_path = os.path.join(saving_params["folder"],
-                                        saving_params["file_name"])
+    folder = retrieve_folder(saving_params)
+    abs_result_dict_path = os.path.join(folder,
+                                        saving_params["result_dict_name"])
     with open(abs_result_dict_path, 'rb') as handle:
         result_dict = pickle.load(handle)
 
@@ -36,3 +38,13 @@ def plot_result(saving_params, save_name):
         ax.set_ylabel("model accuracy")
         ax.legend()
         plt.savefig(save_name + '.png')
+
+
+def retrieve_folder(saving_params):
+    users_with_custom_dir = saving_params["folder"].keys()
+    for user in users_with_custom_dir:
+        if user in os.getcwd():
+            return saving_params["folder"][user]
+    default_dir = os.path.join(os.getcwd(), "result_folder")
+    Path(default_dir).mkdir(parents=True, exist_ok=True)
+    return default_dir

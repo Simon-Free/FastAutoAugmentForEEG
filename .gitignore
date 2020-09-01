@@ -6,4 +6,5 @@ __pycache__
 *cache_dir
 old/*
 *metadata.json
-*output.pkl
+*.pkl
+*.png
