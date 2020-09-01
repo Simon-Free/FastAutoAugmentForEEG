@@ -14,7 +14,6 @@ def dummy_test_shallownet():
     train_sample, test_sample = get_dummy_sample()
     shallow_args["n_epochs"] = 3
     sample_size_list = [1]
-    shallow_args
     main_compute([shallow_args], [dataset_args],
                  train_sample, test_sample,
                  sample_size_list, saving_params)

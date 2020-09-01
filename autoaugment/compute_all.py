@@ -1,12 +1,14 @@
 from .compute_model import compute_experimental_result
 from pathlib import Path
+from .utils import update_saving_params
 import pickle
 import os
 
 
 def main_compute(model_args_list, dataset_args_list, train_dataset,
                  test_dataset, sample_size_list, saving_params):
-    """Train every models given in entry, on their associated dataset.
+    """
+    Train every models given in entry, on their associated dataset.
     Return their validation accuracy on the test_dataset.
 
     Parameters
@@ -28,15 +30,9 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
         X and y transformed to a dataset format that is compatible with skorch
         and braindecode
     """
-
-    Path(saving_params["folder"]).mkdir(parents=True, exist_ok=True)
-    abs_result_dict_path = os.path.join(saving_params["folder"],
-                                        saving_params["file_name"])
-    try:
-        with open(abs_result_dict_path, 'rb') as handle:
-            result_dict = pickle.load(handle)
-    except FileNotFoundError:
-        result_dict = {}
+    
+    saving_params = update_saving_params(saving_params)
+    result_dict = os.path.join(saving_params["result_dict_name"]
 
     for model_args, dataset_args in zip(model_args_list, dataset_args_list):
         key = (model_args["model_type"] + " + "
