@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import glob
 import numpy as np
 import pickle
 import statistics
@@ -7,15 +8,19 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def plot_result(saving_params, save_name):
+def plot_result(saving_params):
 
     folder = retrieve_folder(saving_params)
-    abs_result_dict_path = os.path.join(folder,
+    abs_result_dict_path = os.path.join(folder, "result_dict",
                                         saving_params["result_dict_name"])
+    Path(abs_result_dict_path).mkdir(parents=True, exist_ok=True)
     with open(abs_result_dict_path, 'rb') as handle:
         result_dict = pickle.load(handle)
 
     with sns.axes_style("darkgrid"):
+        abs_img_path = os.path.join(folder, "plots",
+                                    saving_params["result_dict_name"])
+        Path(abs_img_path).mkdir(parents=True, exist_ok=True)
         fig, ax = plt.subplots()
         clrs = sns.color_palette("husl", len(result_dict))
         for i in range(len(list(result_dict.keys()))):
@@ -37,7 +42,10 @@ def plot_result(saving_params, save_name):
         ax.set_xlabel("proportion of the initial training dataset used")
         ax.set_ylabel("model accuracy")
         ax.legend()
-        plt.savefig(save_name + '.png')
+        number = get_number_of_same_experiments(abs_img_path, saving_params)
+        plt.savefig(folder + "/"
+                    + saving_params["result_dict_name"]
+                    + str(number+1) + '.png')
 
 
 def retrieve_folder(saving_params):
@@ -48,3 +56,9 @@ def retrieve_folder(saving_params):
     default_dir = os.path.join(os.getcwd(), "result_folder")
     Path(default_dir).mkdir(parents=True, exist_ok=True)
     return default_dir
+
+
+def get_number_of_same_experiments(folder, saving_params):
+    return len(glob.glob(folder + "/"
+                         + saving_params["result_dict_name"]
+                         + "*.png"))
