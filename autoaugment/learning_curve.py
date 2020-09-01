@@ -4,10 +4,9 @@ import statistics
 import seaborn as sns
 import pickle
 import os
-import os.path
 
 
-def plot_result(saving_params):
+def plot_result(saving_params, save_name):
 
     abs_result_dict_path = os.path.join(saving_params["folder"],
                                         saving_params["file_name"])
@@ -36,10 +35,4 @@ def plot_result(saving_params):
         ax.set_xlabel("proportion of the initial training dataset used")
         ax.set_ylabel("model accuracy")
         ax.legend()
-        model_version = len([name for name in os.listdir(
-                                saving_params["folder"])
-                             if os.path.isfile(
-                                 os.path.join(saving_params["folder"], name))])
-
-        plt.savefig("model_results_v" + str(model_version) + '.png')
-
+        plt.savefig(save_name + '.png')
