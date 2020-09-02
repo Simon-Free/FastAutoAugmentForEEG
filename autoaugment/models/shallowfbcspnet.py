@@ -26,6 +26,7 @@ def get_shallowfbcspnet(model_args):
         )
     if cuda:
         model.cuda()
+    
     lr = model_args["lr"]  # 0.0625 * 0.01
     weight_decay = model_args["weight_decay"]  # 0
 

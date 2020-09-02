@@ -7,9 +7,11 @@ from autoaugment.transforms.identity import identity, identity_ml
 from autoaugment.transforms.masking import mask_along_axis_random
 
 
-params_masking = {"mask_value": 0.0,
-                  "mask_param": 10,
-                  "axis": 2}
+params_masking_random = {"mask_value": 0.0,
+                         "mask_param": 10,
+                         "axis": 2}
+
+
 
 dataset_args = {"transform_type": "raw (no transforms)",
                 "transform_list": [[TransformSignal(identity)]]}
@@ -25,7 +27,7 @@ shallow_args = {"model_type": "ShallowFBCSPNet",
                 "train_split": None,
                 }
 
-saving_params = {"result_dict_name": "dummy_dict",
+saving_params = {"result_dict_name": "main_result_dict",
                  "folder": {"sfreybur": "/storage/store/work/sfreybur/result_folder/"},
                  "user": None}
 
