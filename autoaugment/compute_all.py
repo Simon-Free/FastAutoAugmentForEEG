@@ -57,4 +57,3 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
 
     with open(result_dict_path, 'wb') as handle:
         pickle.dump(result_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
-

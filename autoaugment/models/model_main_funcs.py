@@ -13,9 +13,9 @@ def initialize_model(model_args, train_sample):
     if model_args["model_type"] == "ShallowFBCSPNet":
         model_args["n_classes"] = len(set([train_sample[i][1]
                                            for i in range(len(
-                                               train_sample))])),
-        model_args["n_chans"] = int(train_sample[0][0].shape[0]),
-        model_args["input_window_samples"] = int(train_sample[0][0].shape[1]),
+                                               train_sample))]))
+        model_args["n_chans"] = int(train_sample[0][0].shape[0])
+        model_args["input_window_samples"] = int(train_sample[0][0].shape[1])
         clf = get_shallowfbcspnet(model_args)
         return(clf)
     if model_args["model_type"] == "RandomForest":
@@ -57,4 +57,5 @@ def get_score(clf, model_args, test_dataset):
             test_dataset[i][1] for i
             in range(len(test_dataset))])
     acc = accuracy_score(y_test, y_pred)
+    # print(model_args["model_type"], " : ", str(acc))
     return(acc)

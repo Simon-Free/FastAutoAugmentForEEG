@@ -17,7 +17,7 @@ def plot_result(saving_params):
     to previous ones.
     """
     result_dict_path = os.path.join(
-        saving_params["result_dict_save_folder"] +
+        saving_params["result_dict_save_folder"],
         saving_params["result_dict_name"])
     
     with open(result_dict_path, 'rb') as handle:
