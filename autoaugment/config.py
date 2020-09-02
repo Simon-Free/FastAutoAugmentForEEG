@@ -26,7 +26,8 @@ shallow_args = {"model_type": "ShallowFBCSPNet",
                 }
 
 saving_params = {"result_dict_name": "dummy_dict",
-                 "folder": {"sfreybur": "/storage/store/work/sfreybur/result_folder/"}}
+                 "folder": {"sfreybur": "/storage/store/work/sfreybur/result_folder/"},
+                 "user": None}
 
 hf_args = {"model_type": "RandomForest",
            "n_cross_val": 5}

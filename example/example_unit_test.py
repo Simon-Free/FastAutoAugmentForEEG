@@ -14,6 +14,7 @@ def dummy_test_shallownet():
     train_sample, test_sample = get_dummy_sample()
     shallow_args["n_epochs"] = 3
     sample_size_list = [1]
+    saving_params["result_dict_name"] = "dummy_dict_hf"
     main_compute([shallow_args], [dataset_args],
                  train_sample, test_sample,
                  sample_size_list, saving_params)
@@ -22,13 +23,8 @@ def dummy_test_shallownet():
 
 def dummy_test_handcrafted_features():
     train_sample, test_sample = get_dummy_sample()
-    dataset_args = {"transform_type": "raw (no transforms)",
-                    "transform_list": [[TransformSignal(identity_ml)]]}
-    model_args = {"model_type": "RandomForest",
-                  "n_cross_val": 3}
-    saving_params = {"file_name": "dummy_dict_hf",
-                     "folder": "/storage/store/work/sfreybur/result_folder/"}
-
+    model_args["n_cross_val"] = 3
+    saving_params["result_dict_name"] = "dummy_dict_hf"
     sample_size_list = [1]
     main_compute([model_args], [dataset_args],
                  train_sample, test_sample,

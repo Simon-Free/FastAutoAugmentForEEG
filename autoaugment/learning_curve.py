@@ -9,18 +9,21 @@ import seaborn as sns
 
 
 def plot_result(saving_params):
-
-    folder = retrieve_folder(saving_params)
-    abs_result_dict_path = os.path.join(folder, "result_dict",
-                                        saving_params["result_dict_name"])
-    Path(abs_result_dict_path).mkdir(parents=True, exist_ok=True)
-    with open(abs_result_dict_path, 'rb') as handle:
+    """
+    This function opens the dictionary containing the stored results
+    of previous computation, and display them. Note that it displays
+    all results in the dictionary, not only the one that were computed
+    during the experiment. It allows to easily compare current experiment
+    to previous ones.
+    """
+    result_dict_path = os.path.join(
+        saving_params["result_dict_save_folder"] +
+        saving_params["result_dict_name"])
+    
+    with open(result_dict_path, 'rb') as handle:
         result_dict = pickle.load(handle)
 
     with sns.axes_style("darkgrid"):
-        abs_img_path = os.path.join(folder, "plots",
-                                    saving_params["result_dict_name"])
-        Path(abs_img_path).mkdir(parents=True, exist_ok=True)
         fig, ax = plt.subplots()
         clrs = sns.color_palette("husl", len(result_dict))
         for i in range(len(list(result_dict.keys()))):
@@ -42,23 +45,15 @@ def plot_result(saving_params):
         ax.set_xlabel("proportion of the initial training dataset used")
         ax.set_ylabel("model accuracy")
         ax.legend()
-        number = get_number_of_same_experiments(abs_img_path, saving_params)
-        plt.savefig(folder + "/"
-                    + saving_params["result_dict_name"]
-                    + str(number+1) + '.png')
-
-
-def retrieve_folder(saving_params):
-    users_with_custom_dir = saving_params["folder"].keys()
-    for user in users_with_custom_dir:
-        if user in os.getcwd():
-            return saving_params["folder"][user]
-    default_dir = os.path.join(os.getcwd(), "result_folder")
-    Path(default_dir).mkdir(parents=True, exist_ok=True)
-    return default_dir
+        number = get_number_of_same_experiments(
+            saving_params["plots_save_folder"], saving_params)
+        plt.savefig(os.path.join(saving_params["plots_save_folder"],
+                                 saving_params["result_dict_name"] 
+                                 + str(number+1) + '.png'))
 
 
 def get_number_of_same_experiments(folder, saving_params):
     return len(glob.glob(folder + "/"
                          + saving_params["result_dict_name"]
                          + "*.png"))
+

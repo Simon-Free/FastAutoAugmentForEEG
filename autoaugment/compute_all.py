@@ -32,7 +32,15 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
     """
     
     saving_params = update_saving_params(saving_params)
-    result_dict = os.path.join(saving_params["result_dict_name"]
+    result_dict_path = os.path.join(
+        saving_params["result_dict_save_folder"],
+        saving_params["result_dict_name"])
+
+    try:
+        with open(result_dict_path, 'rb') as handle:
+            result_dict = pickle.load(handle)
+    except (OSError, IOError):
+        result_dict = {}
 
     for model_args, dataset_args in zip(model_args_list, dataset_args_list):
         key = (model_args["model_type"] + " + "
@@ -47,6 +55,6 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
                 result_dict[key] = {}
             result_dict[key][sample_size] = score
 
-    with open(abs_result_dict_path, 'wb') as handle:
+    with open(result_dict_path, 'wb') as handle:
         pickle.dump(result_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
