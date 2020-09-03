@@ -22,7 +22,8 @@ def unit_test_mask_along_axis():
         plt.imshow(spec[0, :, :, 0])
         plt.savefig("/storage/store/work/sfreybur/img/spec_test/spec_without_tr_"
                     + str(i) + ".png")
-        spec_with_tr = TransformFFT(mask_along_axis_random, params_masking).transform(X)
+        spec_with_tr = TransformFFT(
+            mask_along_axis_random, params_masking).transform(X)
         plt.imshow(spec_with_tr[0, :, :, 0])
         plt.savefig("/storage/store/work/sfreybur/img/spec_test/spec_with_tr_"
                     + str(i) + ".png")
@@ -46,11 +47,8 @@ def unit_test_get_sample():
         plt.savefig(
             "/storage/store/work/sfreybur/img/spec_test/spec_subset_transf_"
             + str(i) + ".png")
-    import ipdb; ipdb.set_trace()
     print("finished !")
 
 
 if __name__ == "__main__":
     unit_test_get_sample()
-
-

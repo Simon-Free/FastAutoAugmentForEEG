@@ -49,13 +49,13 @@ def get_score(clf, model_args, test_dataset):
         x_test = np.concatenate([
             test_dataset[i][0].reshape(1, -1) for i
             in range(len(test_dataset))], axis=0)
-        
+
         y_pred = clf.predict(x_test)
     else:
         y_pred = clf.predict(test_dataset)
     y_test = np.array([
-            test_dataset[i][1] for i
-            in range(len(test_dataset))])
+        test_dataset[i][1] for i
+        in range(len(test_dataset))])
     acc = accuracy_score(y_test, y_pred)
     # print(model_args["model_type"], " : ", str(acc))
     return(acc)
