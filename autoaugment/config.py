@@ -1,6 +1,7 @@
+import os
 from braindecode.datasets.transform_classes import TransformSignal
 from autoaugment.transforms.identity import identity, identity_ml
-
+import getpass
 
 params_masking_random = {"mask_value": 0.0,
                          "mask_max_proportion": 10,
@@ -24,16 +25,18 @@ shallow_args = {"model_type": "ShallowFBCSPNet",
                 "train_split": None,
                 }
 
-saving_params = {
-    "result_dict_name": "main_result_dict",
-    "folder": {
-        "sfreybur": "/storage/store/work/sfreybur/result_folder/"},
-    "user": None,
-}
-
 hf_args = {"model_type": "RandomForest",
            "n_cross_val": 5,
            "n_estimators": 100,
            "random_state": 42}
 
 sample_size_list = [0.01, 0.1, 0.25, 0.5, 1]
+
+saving_params = {
+    "result_dict_name": "main_result_dict"
+}
+
+if getpass.getuser() == "sfreybur":
+    saving_params["main_save_folder"] = "/storage/store/work/sfreybur/result_folder/"
+else:
+    default_dir = os.path.join(os.getcwd(), "result_folder")
