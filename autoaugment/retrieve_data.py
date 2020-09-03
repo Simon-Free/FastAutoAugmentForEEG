@@ -100,7 +100,7 @@ def get_sample(train_dataset, sample_size, random_state=None):
                  len(train_dataset) /
                  len(train_dataset.transform_list)),
         replace=False)
-    subset_aug_sample = np.array([np.arange(i, len(tf_list_len))
+    subset_aug_sample = np.array([np.arange(i*tf_list_len, i*tf_list_len + tf_list_len)
                                   for i in subset_sample]).flatten()
     train_subset = Subset(
         dataset=train_dataset,

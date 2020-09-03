@@ -4,7 +4,7 @@ from numpy.testing import assert_almost_equal
 from braindecode.datasets.transform_classes import TransformSignal, \
     TransformFFT
 from autoaugment.transforms.identity import identity
-from autoaugment.retrieve_data import get_dummy_sample
+from autoaugment.tests.utils import get_dummy_sample
 from autoaugment.transforms.masking import mask_along_axis
 
 
