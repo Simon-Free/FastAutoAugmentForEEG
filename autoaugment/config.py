@@ -12,8 +12,11 @@ params_masking_random = {"mask_value": 0.0,
                          "axis": 2}
 
 
-dataset_args = {"transform_type": "raw (no transforms)",
-                "transform_list": [[TransformSignal(identity)]]}
+dl_dataset_args = {"transform_type": "raw (no transforms)",
+                   "transform_list": [[TransformSignal(identity)]]}
+
+hf_dataset_args = {"transform_type": "raw (no transforms)",
+                   "transform_list": [[TransformSignal(identity_ml)]]}
 
 shallow_args = {"model_type": "ShallowFBCSPNet",
                 "batch_size": 64,

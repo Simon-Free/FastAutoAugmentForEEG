@@ -23,10 +23,10 @@ def get_shallowfbcspnet(model_args):
         model_args["n_classes"]+1,
         input_window_samples=model_args["input_window_samples"],
         final_conv_length='auto',
-        )
+    )
     if cuda:
         model.cuda()
-    
+
     lr = model_args["lr"]  # 0.0625 * 0.01
     weight_decay = model_args["weight_decay"]  # 0
 
@@ -47,8 +47,8 @@ def get_shallowfbcspnet(model_args):
             batch_size=batch_size,
             callbacks=[
                 "accuracy", ("lr_scheduler",
-                            LRScheduler('CosineAnnealingLR',
-                                        T_max=n_epochs - 1)),
+                             LRScheduler('CosineAnnealingLR',
+                                         T_max=n_epochs - 1)),
             ],
             device=device,
         )  # torch.in torch.out
@@ -63,11 +63,11 @@ def get_shallowfbcspnet(model_args):
             optimizer__weight_decay=weight_decay,
             batch_size=batch_size,
             callbacks=[
-                "accuracy", 
+                "accuracy",
                 ("lr_scheduler",
                  LRScheduler(
-                    'CosineAnnealingLR',
-                    T_max=n_epochs - 1)),
+                     'CosineAnnealingLR',
+                     T_max=n_epochs - 1)),
             ],
             device=device,
         )  # torch.in torch.out
