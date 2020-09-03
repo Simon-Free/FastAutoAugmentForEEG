@@ -8,9 +8,8 @@ from autoaugment.transforms.masking import mask_along_axis_random
 
 
 params_masking_random = {"mask_value": 0.0,
-                         "mask_param": 10,
+                         "mask_max_proportion": 10,
                          "axis": 2}
-
 
 
 dataset_args = {"transform_type": "raw (no transforms)",

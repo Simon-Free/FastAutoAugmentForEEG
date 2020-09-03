@@ -3,7 +3,6 @@ import torch
 
 def mask_along_axis(
         specgram, params):
-
     r"""
     Apply a mask along ``axis``. Mask will be applied from indices
     ``[v_0, v_0 + v)``, where
@@ -38,7 +37,9 @@ def mask_along_axis(
 def mask_along_axis_random(
         specgram, params):
 
-    value = torch.rand(1) * params['mask_param']
+    value = torch.rand(1) \
+        * params['mask_max_proportion'] * specgram.size(params["axis"])
+
     min_value = torch.rand(1) * (specgram.size(params["axis"]) - value)
 
     params["mask_start"] = (min_value.long()).squeeze()

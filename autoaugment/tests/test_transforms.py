@@ -65,23 +65,15 @@ def test_mask_along_axis_nonrandom():
     where_equal = [(round(img[i, j], 5) == round(img_with_zeros[i, j], 5))
                    for i in range(img.shape[0])
                    for j in range(img.shape[1])
-                   if ((i not in lines_with_zeros)
-                       and (j not in columns_with_zeros))]
-
-    where_equal_2 = []
-    for i in range(img.shape[0]):
-        for j in range(img.shape[1]):
-            if ((i not in lines_with_zeros)
-                    and (j not in columns_with_zeros)):
-                where_equal_2.append(
-                    (round(img[i, j], 5) == round(img_with_zeros[i, j], 5)))
+                   if ((j not in lines_with_zeros)
+                       and (i not in columns_with_zeros))]
 
     assert(all(where_equal))
 
 
 def test_data_recovery():
     train_sample, _ = get_dummy_sample()
-    X = torch.from_numpy(train_sample[0][0])
+    X = train_sample[0][0]
     X_bar = TransformSignal(identity).transform(
-        TransformFFT(identity).transform(X))
+        TransformFFT(identity).transform(X)).numpy()
     assert_almost_equal(X_bar, X, decimal=3)
