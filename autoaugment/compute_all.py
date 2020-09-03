@@ -1,8 +1,8 @@
-from .compute_model import compute_experimental_result
-from pathlib import Path
-from .utils import update_saving_params
 import pickle
 import os
+
+from .compute_model import compute_experimental_result
+from .utils import update_saving_params
 
 
 def main_compute(model_args_list, dataset_args_list, train_dataset,
@@ -30,7 +30,7 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
         X and y transformed to a dataset format that is compatible with skorch
         and braindecode
     """
-    
+
     saving_params = update_saving_params(saving_params)
     result_dict_path = os.path.join(
         saving_params["result_dict_save_folder"],

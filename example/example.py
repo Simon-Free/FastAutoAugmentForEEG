@@ -8,6 +8,7 @@ from autoaugment.config import dl_dataset_args, hf_dataset_args, \
 mne.set_log_level("WARNING")
 
 
+# XXX: test -> run
 def test_shallownet(train_sample, test_sample):
     main_compute([shallow_args], [dl_dataset_args],
                  train_sample, test_sample,

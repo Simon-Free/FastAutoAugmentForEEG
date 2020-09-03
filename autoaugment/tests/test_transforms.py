@@ -1,20 +1,11 @@
 import numpy as np
 from numpy.testing import assert_almost_equal
-import matplotlib.pyplot as plt
 
-import pytest
-
-import torch
-import mne
 from braindecode.datasets.transform_classes import TransformSignal, \
     TransformFFT
-from ..transforms.masking import mask_along_axis_random
-from ..transforms.identity import identity, identity_ml
-from ..learning_curve import plot_result
-from ..compute_all import main_compute
-from ..retrieve_data import get_dummy_sample, get_sample
-from ..retrieve_data import get_dummy_sample
-from ..transforms.masking import mask_along_axis
+from autoaugment.transforms.identity import identity
+from autoaugment.retrieve_data import get_dummy_sample
+from autoaugment.transforms.masking import mask_along_axis
 
 
 def test_mask_along_axis_nonrandom():

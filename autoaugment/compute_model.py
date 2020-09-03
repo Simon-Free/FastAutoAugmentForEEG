@@ -8,7 +8,7 @@ def compute_experimental_result(model_args,
                                 train_dataset,
                                 test_dataset,
                                 sample_size):
-                                
+
     train_dataset.change_transform_list(dataset_args["transform_list"])
     score_list = []
     for i in range(model_args["n_cross_val"]):
@@ -58,6 +58,4 @@ def compute_experimental_result(model_args,
 #             print()
 #             results = [x for x in results if x.last_result is not None]
 #             results = sorted(results, key=lambda x: x.last_result[reward_attr], reverse=True)
-
-
 

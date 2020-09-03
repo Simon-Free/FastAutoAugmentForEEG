@@ -1,10 +1,5 @@
-import mne
-from braindecode.datasets.transform_classes import TransformSignal, TransformFFT
-from autoaugment.retrieve_data import get_dummy_sample
-from autoaugment.compute_all import main_compute
-from autoaugment.learning_curve import plot_result
+from braindecode.datasets.transform_classes import TransformSignal
 from autoaugment.transforms.identity import identity, identity_ml
-from autoaugment.transforms.masking import mask_along_axis_random
 
 
 params_masking_random = {"mask_value": 0.0,

@@ -1,16 +1,20 @@
-import mne
-from mne.datasets.sleep_physionet.age import fetch_data
-from braindecode.datasets import BaseConcatDataset
-from braindecode.datasets import create_from_mne_epochs
 import numpy as np
-from torch.utils.data import Subset, ConcatDataset
+import mne
+
+from mne.datasets.sleep_physionet.age import fetch_data
+from torch.utils.data import Subset
+
+from braindecode.datasets import create_from_mne_epochs
+
 from joblib import Memory
+
 cachedir = 'cache_dir'
 memory = Memory(cachedir, verbose=0)
 
 
+# XXX use tuple not list
 def get_epochs_data(train_subjects=list(range(15)),
-                    test_subjects=list(range(15, 20)), recording=[1, 2], 
+                    test_subjects=list(range(15, 20)), recording=[1, 2],
                     dummy=False):
     train_files_list = fetch_data(subjects=train_subjects, recording=recording)
     test_files_list = fetch_data(subjects=test_subjects, recording=recording)
@@ -47,6 +51,7 @@ def get_epochs_data(train_subjects=list(range(15)),
                                   baseline=None).load_data()
         epochs_train.drop_bad()
         epochs_train_list.append(epochs_train)
+
     for subj_files in test_files_list:
         raw_test = mne.io.read_raw_edf(subj_files[0])
         annot_test = mne.read_annotations(subj_files[1])
@@ -57,7 +62,7 @@ def get_epochs_data(train_subjects=list(range(15)),
         epochs_test = mne.Epochs(raw=raw_test, events=events_test,
                                  event_id=event_id,
                                  tmin=0., tmax=tmax, baseline=None).load_data()
-        
+
         epochs_test.drop_bad()
         epochs_test_list.append(epochs_test)
 
@@ -74,7 +79,7 @@ def get_epochs_data(train_subjects=list(range(15)),
             epochs_test_list, window_size_samples=3000,
             window_stride_samples=3000,
             drop_last_window=False)
-    
+
     else:
         train_sample = create_from_mne_epochs(
             epochs_train_list,
@@ -96,15 +101,14 @@ def get_sample(train_dataset, sample_size, random_state=None):
     rng = np.random.RandomState(random_state)
     tf_list_len = len(train_dataset.transform_list)
     subset_sample = rng.choice(
-        range(int(len(train_dataset)/len(train_dataset.transform_list))),
+        range(int(len(train_dataset) / len(train_dataset.transform_list))),
         size=int(sample_size *
                  len(train_dataset) /
                  len(train_dataset.transform_list)),
         replace=False)
     subset_aug_sample = np.array(
-        [np.array(
-            [i*tf_list_len + j for j in range(tf_list_len)]
-            )
+        [np.array([i * tf_list_len + j for j in range(tf_list_len)])
+         # XXX use arange
          for i in subset_sample]).flatten()
     train_subset = Subset(
        dataset=train_dataset,
@@ -112,6 +116,7 @@ def get_sample(train_dataset, sample_size, random_state=None):
     return train_subset
 
 
+# XXX : move to test folder
 @memory.cache
 def get_dummy_sample():
     train_sample, test_sample = get_epochs_data(
@@ -122,7 +127,7 @@ def get_dummy_sample():
     #     train_sample[i] = (train_sample[i][0][:50], train_sample[i][1],
     #                        train_sample[i][2])
     # for i in range(len(test_sample)):
-    #     test_sample[i] = (test_sample[i][0][:50], 
+    #     test_sample[i] = (test_sample[i][0][:50],
     #                       test_sample[i][1], test_sample[i][2])
     test_choice = np.random.choice(
         range(len(test_sample)),
