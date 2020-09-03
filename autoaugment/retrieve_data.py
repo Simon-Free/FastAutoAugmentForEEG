@@ -6,15 +6,9 @@ from torch.utils.data import Subset
 
 from braindecode.datasets import create_from_mne_epochs
 
-from joblib import Memory
 
-cachedir = 'cache_dir'
-memory = Memory(cachedir, verbose=0)
-
-
-# XXX use tuple not list
-def get_epochs_data(train_subjects=list(range(15)),
-                    test_subjects=list(range(15, 20)), recording=[1, 2],
+def get_epochs_data(train_subjects=tuple(range(15)),
+                    test_subjects=tuple(range(15, 20)), recording=[1, 2],
                     dummy=False):
     train_files_list = fetch_data(subjects=train_subjects, recording=recording)
     test_files_list = fetch_data(subjects=test_subjects, recording=recording)
@@ -106,51 +100,12 @@ def get_sample(train_dataset, sample_size, random_state=None):
                  len(train_dataset) /
                  len(train_dataset.transform_list)),
         replace=False)
-    subset_aug_sample = np.array(
-        [np.array([i * tf_list_len + j for j in range(tf_list_len)])
-         # XXX use arange
-         for i in subset_sample]).flatten()
+    subset_aug_sample = np.array([np.arange(i, len(tf_list_len))
+                                  for i in subset_sample]).flatten()
     train_subset = Subset(
-       dataset=train_dataset,
-       indices=subset_aug_sample)
+        dataset=train_dataset,
+        indices=subset_aug_sample)
     return train_subset
-
-
-# XXX : move to test folder
-@memory.cache
-def get_dummy_sample():
-    train_sample, test_sample = get_epochs_data(
-        train_subjects=[0],
-        test_subjects=[1],
-        recording=[1], dummy=True)
-    # for i in range(len(train_sample)):
-    #     train_sample[i] = (train_sample[i][0][:50], train_sample[i][1],
-    #                        train_sample[i][2])
-    # for i in range(len(test_sample)):
-    #     test_sample[i] = (test_sample[i][0][:50],
-    #                       test_sample[i][1], test_sample[i][2])
-    test_choice = np.random.choice(
-        range(len(test_sample)),
-        size=2,
-        replace=False)
-    train_sample.datasets = [train_sample.datasets[350],
-                             train_sample.datasets[1029],
-                             train_sample.datasets[1291],
-                             train_sample.datasets[1650],
-                             train_sample.datasets[1571]]
-    train_sample.description = train_sample.description.loc[[0, 1, 2, 3, 4]]
-    train_sample.cumulative_sizes = train_sample.cumulative_sizes[:5]
-
-    test_sample.datasets = [test_sample.datasets[test_choice[0]],
-                            test_sample.datasets[test_choice[1]]]
-    test_sample.description = test_sample.description.loc[[0, 1, 2, 3, 4]]
-    test_sample.cumulative_sizes = test_sample.cumulative_sizes[:2]
-    # sub_train_sample = Subset(train_sample, [350, 1029, 1291, 1650, 1571])
-    train_sample.transform_list = train_sample.transform_list
-    # sub_test_sample = Subset(test_sample, test_choice)
-    test_sample.transform_list = test_sample.transform_list
-
-    return train_sample, test_sample
 
     # TODO Assert getitem sur GPU.
     # TODO Trouver autre solution subset.

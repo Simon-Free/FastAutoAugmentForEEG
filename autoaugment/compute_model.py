@@ -1,5 +1,5 @@
 
-from .models.model_main_funcs import initialize_model, get_score, fit_model
+from .model_main_funcs import initialize_model, get_score, fit_model
 from .retrieve_data import get_sample
 
 
@@ -58,4 +58,3 @@ def compute_experimental_result(model_args,
 #             print()
 #             results = [x for x in results if x.last_result is not None]
 #             results = sorted(results, key=lambda x: x.last_result[reward_attr], reverse=True)
-

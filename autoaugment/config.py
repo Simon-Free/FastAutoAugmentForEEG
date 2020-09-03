@@ -24,11 +24,16 @@ shallow_args = {"model_type": "ShallowFBCSPNet",
                 "train_split": None,
                 }
 
-saving_params = {"result_dict_name": "main_result_dict",
-                 "folder": {"sfreybur": "/storage/store/work/sfreybur/result_folder/"},
-                 "user": None}
+saving_params = {
+    "result_dict_name": "main_result_dict",
+    "folder": {
+        "sfreybur": "/storage/store/work/sfreybur/result_folder/"},
+    "user": None,
+}
 
 hf_args = {"model_type": "RandomForest",
-           "n_cross_val": 5}
+           "n_cross_val": 5,
+           "n_estimators": 100,
+           "random_state": 42}
 
 sample_size_list = [0.01, 0.1, 0.25, 0.5, 1]
