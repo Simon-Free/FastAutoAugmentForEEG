@@ -1,7 +1,7 @@
 import mne
 from braindecode.datasets.transform_classes import TransformSignal, \
     TransformFFT
-from autoaugment.retrieve_data import get_epochs_data
+from autoaugment.tests.utils import get_dummy_sample
 from autoaugment.compute_all import main_compute
 from autoaugment.learning_curve import plot_result
 from autoaugment.transforms.identity import identity, identity_ml
@@ -25,23 +25,35 @@ hf_dataset_args = {"transform_type": "included masking transforms",
                                      params_masking_random),
                         TransformSignal(identity_ml)]]}
 sample_size_list = [1]
-saving_params["file_name"] = "small_dict"
+saving_params["file_name"] = "dummy_dict"
 hf_args["n_cross_val"] = 3
 shallow_args["n_epochs"] = 3
 
 
-def small_test_shallownet():
-                 "folder": "/storage/store/work/sfreybur/result_folder/"}
+def dummy_shallownet_with_transf(train_sample, test_sample):
 
-main_compute([model_args], [dataset_args],
-             train_sample, test_sample,
-             sample_size_list, saving_params)
+    main_compute([shallow_args], [dl_dataset_args],
+                 train_sample, test_sample,
+                 sample_size_list, saving_params)
+
+
+def dummy_handcrafted_features_with_transf(train_sample, test_sample):
+    main_compute([hf_args], [hf_dataset_args],
+                 train_sample, test_sample,
+                 sample_size_list, saving_params)
+
+
+def test_dummy_shallownet_with_transf():
+    train_sample, test_sample = get_dummy_sample()
+    dummy_shallownet_with_transf(train_sample, test_sample)
+    plot_result(saving_params)
+
+
+def test_dummy_handcrafted_features_with_transf():
+    train_sample, test_sample = get_dummy_sample()
+    dummy_handcrafted_features_with_transf(train_sample, test_sample)
+    plot_result(saving_params)
 
 
 if __name__ == "__main__":
-    train_sample, test_sample = train_sample, test_sample = get_epochs_data(
-        train_subjects=[1],
-        test_subjects=[2],
-        recording=[1])
-    small_test_shallownet()
-    plot_result(saving_params, save_name="model_bar")
+    test_dummy_shallownet_with_transf()
