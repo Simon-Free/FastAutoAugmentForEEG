@@ -7,11 +7,13 @@ from torch.utils.data import Subset
 from braindecode.datasets import create_from_mne_epochs
 
 
-def get_epochs_data(train_subjects=tuple(range(15)),
-                    test_subjects=tuple(range(15, 20)), recording=[1, 2],
+def get_epochs_data(train_subjects=tuple(range(0, 60)),
+                    test_subjects=tuple(range(60, 83)), recording=[1, 2],
                     dummy=False):
-    train_files_list = fetch_data(subjects=train_subjects, recording=recording)
-    test_files_list = fetch_data(subjects=test_subjects, recording=recording)
+    train_files_list = fetch_data(
+        subjects=train_subjects, recording=recording, on_missing="ignore")
+    test_files_list = fetch_data(
+        subjects=test_subjects, recording=recording, on_missing="ignore")
     mapping = {'EOG horizontal': 'eog',
                'Resp oro-nasal': 'misc',
                'EMG submental': 'misc',

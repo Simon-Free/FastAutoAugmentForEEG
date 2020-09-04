@@ -30,18 +30,26 @@ hf_args["n_cross_val"] = 3
 shallow_args["n_epochs"] = 3
 
 
-def small_test_shallownet():
-                 "folder": "/storage/store/work/sfreybur/result_folder/"}
+def test_small_shallownet_with_transforms(train_sample, test_sample):
+    main_compute([shallow_args], [dl_dataset_args],
+                 train_sample, test_sample,
+                 sample_size_list, saving_params)
 
-main_compute([model_args], [dataset_args],
-             train_sample, test_sample,
-             sample_size_list, saving_params)
+
+def test_small_handcrafted_features_with_transforms(train_sample, test_sample):
+    main_compute([hf_args], [hf_dataset_args],
+                 train_sample, test_sample,
+                 sample_size_list, saving_params)
 
 
 if __name__ == "__main__":
-    train_sample, test_sample = train_sample, test_sample = get_epochs_data(
+
+    train_sample, test_sample = get_epochs_data(
         train_subjects=[1],
         test_subjects=[2],
         recording=[1])
-    small_test_shallownet()
-    plot_result(saving_params, save_name="model_bar")
+
+    test_small_shallownet_with_transforms(train_sample, test_sample)
+    test_small_handcrafted_features_with_transforms(train_sample, test_sample)
+
+    plot_result(saving_params)
