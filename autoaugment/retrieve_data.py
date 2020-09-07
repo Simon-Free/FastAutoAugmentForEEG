@@ -53,7 +53,8 @@ def get_epochs_data(train_subjects=tuple(range(0, 60)),
                                       baseline=None).load_data()
         except ValueError:
             epochs_train = mne.Epochs(raw=raw_train, events=events_train,
-                                      event_id=event_id_if_problem, tmin=0., tmax=tmax,
+                                      event_id=event_id_if_problem, tmin=0.,
+                                      tmax=tmax,
                                       baseline=None).load_data()
         epochs_train.drop_bad()
         epochs_train_list.append(epochs_train)
@@ -68,11 +69,13 @@ def get_epochs_data(train_subjects=tuple(range(0, 60)),
         try:
             epochs_test = mne.Epochs(raw=raw_test, events=events_test,
                                      event_id=event_id,
-                                     tmin=0., tmax=tmax, baseline=None).load_data()
+                                     tmin=0., tmax=tmax, baseline=None
+                                     ).load_data()
         except ValueError:
             epochs_test = mne.Epochs(raw=raw_test, events=events_test,
                                      event_id=event_id_if_problem,
-                                     tmin=0., tmax=tmax, baseline=None).load_data()
+                                     tmin=0., tmax=tmax, baseline=None
+                                     ).load_data()
 
         epochs_test.drop_bad()
         epochs_test_list.append(epochs_test)
@@ -117,7 +120,8 @@ def get_sample(train_dataset, sample_size, random_state=None):
                  len(train_dataset) /
                  len(train_dataset.transform_list)),
         replace=False)
-    subset_aug_sample = np.array([np.arange(i*tf_list_len, i*tf_list_len + tf_list_len)
+    subset_aug_sample = np.array([np.arange(i*tf_list_len, i*tf_list_len
+                                            + tf_list_len)
                                   for i in subset_sample]).flatten()
     train_subset = Subset(
         dataset=train_dataset,

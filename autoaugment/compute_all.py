@@ -1,8 +1,9 @@
 import pickle
 import os
 
-from .compute_model import compute_experimental_result
 from .utils import update_saving_params
+from .compute_model import initialize_model, get_score, fit_model
+from .retrieve_data import get_sample
 
 
 def main_compute(model_args_list, dataset_args_list, train_dataset,
@@ -57,3 +58,24 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
 
     with open(result_dict_path, 'wb') as handle:
         pickle.dump(result_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def compute_experimental_result(model_args,
+                                dataset_args,
+                                train_dataset,
+                                test_dataset,
+                                sample_size):
+
+    train_dataset.change_transform_list(dataset_args["transform_list"])
+    score_list = []
+
+    for i in range(model_args["n_cross_val"]):
+
+        train_subset = get_sample(train_dataset,
+                                  sample_size,
+                                  random_state=i)
+        model = initialize_model(model_args, train_subset)
+        model = fit_model(model, model_args, train_subset)
+        score_list.append(get_score(model, model_args, test_dataset))
+
+    return score_list

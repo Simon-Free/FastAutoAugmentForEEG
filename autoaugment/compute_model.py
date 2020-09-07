@@ -1,6 +1,8 @@
-
-from .model_main_funcs import initialize_model, get_score, fit_model
+import numpy as np
+from sklearn.metrics import accuracy_score
 from .retrieve_data import get_sample
+from .models.shallowfbcspnet import get_shallowfbcspnet
+from .models.handcrafted_features import get_randomforest
 
 
 def compute_experimental_result(model_args,
@@ -24,40 +26,53 @@ def compute_experimental_result(model_args,
     return score_list
 
 
-# def compute_experimental_result_FastAutoAugment():
-#     ops = augment_list(False)
-#     space = {}
-#     for i in range(args.num_policy):
-#         for j in range(args.num_op):
-#             space['policy_%d_%d' % (i, j)] = hp.choice('policy_%d_%d' % (i, j), list(range(0, len(ops))))
-#             space['prob_%d_%d' % (i, j)] = hp.uniform('prob_%d_ %d' % (i, j), 0.0, 1.0)
-#             space['level_%d_%d' % (i, j)] = hp.uniform('level_%d_ %d' % (i, j), 0.0, 1.0)
+def initialize_model(model_args, train_sample):
+    if model_args["model_type"] == "ShallowFBCSPNet":
+        model_args["n_classes"] = len(set([train_sample[i][1]
+                                           for i in range(len(
+                                               train_sample))]))
+        model_args["n_chans"] = int(train_sample[0][0].shape[0])
+        model_args["input_window_samples"] = int(train_sample[0][0].shape[1])
+        clf = get_shallowfbcspnet(model_args)
+        return clf
+    if model_args["model_type"] == "RandomForest":
+        clf = get_randomforest(model_args)
+        return clf
+    else:
+        raise ValueError('Boom!!!')
 
-#     final_policy_set = []
-#     total_computation = 0
-#     reward_attr = 'top1_valid'      # top1_valid or minus_loss
-#     for _ in range(1):  # run multiple times.
-#         for cv_fold in range(cv_num):
-#             name = "search_%s_%s_fold%d_ratio%.1f" % (C.get()['dataset'], C.get()['model']['type'], cv_fold, args.cv_ratio)
-#             print(name)
-#             register_trainable(name, lambda augs, rpt: eval_tta(copy.deepcopy(copied_c), augs, rpt))
-#             algo = HyperOptSearch(space, max_concurrent=4*20, reward_attr=reward_attr)
 
-#             exp_config = {
-#                 name: {
-#                     'run': name,
-#                     'num_samples': 4 if args.smoke_test else args.num_search,
-#                     'resources_per_trial': {'gpu': 1},
-#                     'stop': {'training_iteration': args.num_policy},
-#                     'config': {
-#                         'dataroot': args.dataroot, 'save_path': paths[cv_fold],
-#                         'cv_ratio_test': args.cv_ratio, 'cv_fold': cv_fold,
-#                         'num_op': args.num_op, 'num_policy': args.num_policy
-#                     },
-#                 }
-#             }
+def fit_model(model, model_args, train_dataset):
 
-#             results = run_experiments(exp_config, search_alg=algo, scheduler=None, verbose=0, queue_trials=True, resume=args.resume, raise_on_failed_trial=False)
-#             print()
-#             results = [x for x in results if x.last_result is not None]
-#             results = sorted(results, key=lambda x: x.last_result[reward_attr], reverse=True)
+    if model_args["model_type"] == "RandomForest":
+        x_train = np.concatenate([
+            train_dataset[i][0].reshape(1, -1) for i
+            in range(len(train_dataset))], axis=0)
+        y_train = np.array([
+            train_dataset[i][1] for i
+            in range(len(train_dataset))])
+        model.fit(x_train, y_train)
+    else:
+        y_train = np.array([data[1] for data in iter(train_dataset)])
+        model.fit(train_dataset, y=y_train, epochs=model_args["n_epochs"])
+
+    return(model)
+
+
+# @memory.cache
+def get_score(clf, model_args, test_dataset):
+
+    if model_args["model_type"] == "RandomForest":
+        x_test = np.concatenate([
+            test_dataset[i][0].reshape(1, -1) for i
+            in range(len(test_dataset))], axis=0)
+
+        y_pred = clf.predict(x_test)
+    else:
+        y_pred = clf.predict(test_dataset)
+    y_test = np.array([
+        test_dataset[i][1] for i
+        in range(len(test_dataset))])
+    acc = accuracy_score(y_test, y_pred)
+    # print(model_args["model_type"], " : ", str(acc))
+    return(acc)
