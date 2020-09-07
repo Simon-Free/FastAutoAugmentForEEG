@@ -31,11 +31,6 @@ def get_epochs_data(train_subjects=tuple(range(0, 60)),
                 'Sleep stage 3/4': 4,
                 'Sleep stage R': 5}
 
-    event_id_if_problem = {'Sleep stage W': 1,
-                           'Sleep stage 1': 2,
-                           'Sleep stage 2': 3,
-                           'Sleep stage R': 5}
-
     epochs_train_list = []
     epochs_test_list = []
 
@@ -47,15 +42,9 @@ def get_epochs_data(train_subjects=tuple(range(0, 60)),
         events_train, _ = mne.events_from_annotations(
             raw_train, event_id=annotation_desc_2_event_id, chunk_duration=30.)
         tmax = 30. - 1. / raw_train.info['sfreq']
-        try:
-            epochs_train = mne.Epochs(raw=raw_train, events=events_train,
-                                      event_id=event_id, tmin=0., tmax=tmax,
-                                      baseline=None).load_data()
-        except ValueError:
-            epochs_train = mne.Epochs(raw=raw_train, events=events_train,
-                                      event_id=event_id_if_problem, tmin=0.,
-                                      tmax=tmax,
-                                      baseline=None).load_data()
+        epochs_train = mne.Epochs(raw=raw_train, events=events_train,
+                                  event_id=event_id, tmin=0., tmax=tmax,
+                                  baseline=None, on_missing='warn').load_data()
         epochs_train.drop_bad()
         epochs_train_list.append(epochs_train)
 
@@ -66,16 +55,9 @@ def get_epochs_data(train_subjects=tuple(range(0, 60)),
         raw_test.set_channel_types(mapping)
         events_test, _ = mne.events_from_annotations(
             raw_test, event_id=annotation_desc_2_event_id, chunk_duration=30.)
-        try:
-            epochs_test = mne.Epochs(raw=raw_test, events=events_test,
-                                     event_id=event_id,
-                                     tmin=0., tmax=tmax, baseline=None
-                                     ).load_data()
-        except ValueError:
-            epochs_test = mne.Epochs(raw=raw_test, events=events_test,
-                                     event_id=event_id_if_problem,
-                                     tmin=0., tmax=tmax, baseline=None
-                                     ).load_data()
+        epochs_test = mne.Epochs(raw=raw_test, events=events_test,
+                                 event_id=event_id, tmin=0., tmax=tmax,
+                                 baseline=None, on_missing='warn').load_data()
 
         epochs_test.drop_bad()
         epochs_test_list.append(epochs_test)
