@@ -1,6 +1,5 @@
 import torch
 from skorch.callbacks import LRScheduler
-from skorch.helper import predefined_split
 from braindecode.models import ShallowFBCSPNet
 from braindecode.util import set_random_seeds
 from braindecode import EEGClassifier

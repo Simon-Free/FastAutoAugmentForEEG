@@ -1,15 +1,15 @@
 import numpy as np
 import mne
 
-from mne.datasets.sleep_physionet.age import fetch_data
 from torch.utils.data import Subset
-
+from mne.datasets.sleep_physionet.age import fetch_data
+from braindecode.datautil import NumpyPreproc, MNEPreproc, preprocess
 from braindecode.datasets import create_from_mne_epochs
 
 
 def get_epochs_data(train_subjects=tuple(range(0, 60)),
                     test_subjects=tuple(range(60, 83)), recording=[1, 2],
-                    dummy=False):
+                    preprocessing=True):
     train_files_list = fetch_data(
         subjects=train_subjects, recording=recording, on_missing="ignore")
     test_files_list = fetch_data(
@@ -62,33 +62,31 @@ def get_epochs_data(train_subjects=tuple(range(0, 60)),
         epochs_test.drop_bad()
         epochs_test_list.append(epochs_test)
 
-    if dummy:
-        train_sample = create_from_mne_epochs(
-            epochs_train_list,
-            window_size_samples=3000,
-            window_stride_samples=3000,
-            drop_last_window=False)
-        # import ipdb; ipdb.set_trace()
-    #    train_sample.cumulative_sizes()
+    train_sample = create_from_mne_epochs(
+        epochs_train_list,
+        window_size_samples=3000,
+        window_stride_samples=3000,
+        drop_last_window=False)
+    # import ipdb; ipdb.set_trace()
+#    train_sample.cumulative_sizes()
 
-        test_sample = create_from_mne_epochs(
-            epochs_test_list, window_size_samples=3000,
-            window_stride_samples=3000,
-            drop_last_window=False)
+    test_sample = create_from_mne_epochs(
+        epochs_test_list, window_size_samples=3000,
+        window_stride_samples=3000,
+        drop_last_window=False)
 
-    else:
-        train_sample = create_from_mne_epochs(
-            epochs_train_list,
-            window_size_samples=3000,
-            window_stride_samples=3000,
-            drop_last_window=False)
-        # import ipdb; ipdb.set_trace()
-    #    train_sample.cumulative_sizes()
-
-        test_sample = create_from_mne_epochs(
-            epochs_test_list, window_size_samples=3000,
-            window_stride_samples=3000,
-            drop_last_window=False)
+    if preprocessing:
+        high_cut_hz = 30
+        preprocessors = [
+            # convert from volt to microvolt,
+            # directly modifying the numpy array
+            NumpyPreproc(fn=lambda x: x * 1e6),
+            # bandpass filter
+            MNEPreproc(fn='filter', l_freq=None, h_freq=high_cut_hz),
+        ]
+        # Transform the data
+        preprocess(train_sample, preprocessors)
+        preprocess(test_sample, preprocessors)
 
     return train_sample, test_sample
 

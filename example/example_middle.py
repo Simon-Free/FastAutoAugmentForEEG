@@ -7,7 +7,9 @@ from autoaugment.config import dl_dataset_args, hf_dataset_args, \
     hf_dataset_args_with_transforms, dl_dataset_args_with_transforms, \
     shallow_args, saving_params, hf_args, sample_size_list
 mne.set_log_level("WARNING")
-# TODO : parler dans mon rapport de stage du problème des données unbalanced
+
+saving_params["result_dict_name"] = "middle_result_dict"
+sample_size_list = [1]
 
 
 def run_shallownet(train_sample, test_sample):
@@ -36,7 +38,8 @@ def run_handcrafted_features_with_transforms(train_sample, test_sample):
 
 if __name__ == "__main__":
 
-    train_sample, test_sample = get_epochs_data()
+    train_sample, test_sample = get_epochs_data(
+        train_subjects=range(0, 10), test_subjects=range(10, 20))
     # run_handcrafted_features(train_sample, test_sample)
     run_shallownet(train_sample, test_sample)
     run_shallownet_with_transforms(train_sample, test_sample)
