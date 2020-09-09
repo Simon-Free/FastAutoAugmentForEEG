@@ -30,7 +30,8 @@ References
 # train our network and the second one to evaluate performance (as in the _MNE
 # sleep staging example).
 #
-# .. _MNE: https://mne.tools/stable/auto_tutorials/sample-datasets/plot_sleep.html
+# .. MNE:
+# https://mne.tools/stable/auto_tutorials/sample-datasets/plot_sleep.html
 #
 # .. note::
 #    To load your own datasets either via mne or from

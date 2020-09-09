@@ -22,15 +22,16 @@ dl_dataset_args_with_transforms = {
     "transform_list": [[TransformSignal(identity)],
                        [TransformFFT(mask_along_axis_random,
                                      params_masking_random),
-                        TransformSignal(identity)]]
+                        TransformSignal(identity)]],
     "preprocessing": True}
 
-hf_dataset_args_with_transforms = {"transform_type": "included masking transforms",
-                                   "transform_list": [
-                                       [TransformSignal(identity_ml)],
-                                       [TransformFFT(mask_along_axis_random,
-                                                     params_masking_random),
-                                        TransformSignal(identity_ml)]]}
+hf_dataset_args_with_transforms = {
+    "transform_type": "included masking transforms",
+    "transform_list": [
+        [TransformSignal(identity_ml)],
+        [TransformFFT(mask_along_axis_random,
+                      params_masking_random),
+         TransformSignal(identity_ml)]]}
 
 shallow_args = {
     "model_type": "ShallowFBCSPNet",
@@ -69,6 +70,7 @@ saving_params = {
 }
 
 if getpass.getuser() == "sfreybur":
-    saving_params["main_save_folder"] = "/storage/store/work/sfreybur/result_folder/"
+    saving_params["main_save_folder"] = \
+        "/storage/store/work/sfreybur/result_folder/"
 else:
     default_dir = os.path.join(os.getcwd(), "result_folder")

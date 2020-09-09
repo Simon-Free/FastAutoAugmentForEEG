@@ -14,8 +14,8 @@ def get_epochs_data(train_subjects=tuple(range(0, 50)),
 
     train_sample = build_epoch(train_subjects, recording, preprocessing)
     valid_sample = build_epoch(valid_subjects, recording, preprocessing)
-    test = build_epoch(test_subjects, recording, preprocessing)
-                               
+    test_sample = build_epoch(test_subjects, recording, preprocessing)
+
     return train_sample, valid_sample, test_sample
 
 

@@ -1,14 +1,10 @@
 import mne
-from braindecode.datasets.transform_classes import TransformSignal, \
-    TransformFFT
 from autoaugment.tests.utils import get_dummy_sample
 from autoaugment.compute_all import main_compute
 from autoaugment.learning_curve import plot_result
-from autoaugment.transforms.identity import identity, identity_ml
-from autoaugment.transforms.masking import mask_along_axis_random
 from autoaugment.config import shallow_args, saving_params, \
     dl_dataset_args_with_transforms, hf_dataset_args_with_transforms, \
-    hf_args, params_masking_random
+    hf_args
 mne.set_log_level("WARNING")
 
 
