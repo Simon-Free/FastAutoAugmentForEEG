@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.metrics import accuracy_score
 from .retrieve_data import get_sample
-from .models.shallowfbcspnet import get_shallowfbcspnet
+from .models.deep_learning_models import get_deep_learning_model
 from .models.handcrafted_features import get_randomforest
 
 
@@ -27,13 +27,13 @@ def compute_experimental_result(model_args,
 
 
 def initialize_model(model_args, train_sample):
-    if model_args["model_type"] == "ShallowFBCSPNet":
+    if model_args["model_type"] in ["ShallowFBCSPNet", "ChambonSleepStager"]:
         model_args["n_classes"] = len(set([train_sample[i][1]
-                                           for i in range(len(
-                                               train_sample))]))
+                                    for i in range(len(
+                                        train_sample))]))
         model_args["n_chans"] = int(train_sample[0][0].shape[0])
         model_args["input_window_samples"] = int(train_sample[0][0].shape[1])
-        clf = get_shallowfbcspnet(model_args)
+        clf = get_deep_learning_model(model_args)
         return clf
     if model_args["model_type"] == "RandomForest":
         clf = get_randomforest(model_args)

@@ -1,4 +1,5 @@
 import os
+import torch
 from braindecode.datasets.transform_classes import TransformSignal, \
     TransformFFT
 from autoaugment.transforms.identity import identity, identity_ml
@@ -21,7 +22,8 @@ dl_dataset_args_with_transforms = {
     "transform_list": [[TransformSignal(identity)],
                        [TransformFFT(mask_along_axis_random,
                                      params_masking_random),
-                        TransformSignal(identity)]]}
+                        TransformSignal(identity)]]
+    "preprocessing": True}
 
 hf_dataset_args_with_transforms = {"transform_type": "included masking transforms",
                                    "transform_list": [
@@ -38,8 +40,21 @@ shallow_args = {
     "weight_decay": 0,
     "n_epochs": 100,
     "n_cross_val": 3,
-    "try": "bar",
-    "train_split": None,
+    "criterion": torch.nn.CrossEntropyLoss,
+    "device": "cuda:1",
+}
+
+chambon_args = {
+    "model_type": "ChambonSleepStager",
+    "batch_size": 128,
+    "seed": None,
+    "sfreq": 100,
+    "lr": 0.001,
+    "weight_decay": 0,
+    "n_epochs": 50,
+    "n_cross_val": 3,
+    "criterion": torch.nn.NLLLoss,
+    "device": "cuda:2",
 }
 
 hf_args = {"model_type": "RandomForest",
