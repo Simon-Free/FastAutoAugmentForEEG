@@ -17,14 +17,14 @@ def get_deep_learning_model(model_args, valid_dataset):
     if seed:
         set_random_seeds(seed=seed, cuda=cuda)
 
-    if model_args["model_name"] == "ShallowFBCSPNET":
+    if model_args["model_type"] == "ShallowFBCSPNet":
         model = ShallowFBCSPNet(
             model_args["n_chans"],
             model_args["n_classes"]+1,
             input_window_samples=model_args["input_window_samples"],
             final_conv_length='auto',
         )
-    elif model_args["model_name"] == "SleepStager":
+    elif model_args["model_type"] == "SleepStager":
         model = model = SleepStager(
             n_channels=model_args["n_chans"],
             sfreq=model_args["sfreq"],
