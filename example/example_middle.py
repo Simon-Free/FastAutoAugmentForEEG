@@ -11,9 +11,9 @@ mne.set_log_level("WARNING")
 
 saving_params["result_dict_name"] = "middle_result_dict"
 shallow_args["n_epochs"] = 50
-shallow_args["n_cross_val"] = 3
+shallow_args["n_cross_val"] = 1
 sleepstager_args["n_epochs"] = 50
-sleepstager_args["n_cross_val"] = 3
+sleepstager_args["n_cross_val"] = 1
 sample_size_list = [1]
 
 if __name__ == "__main__":
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     sleepstager_args['criterion'] = torch.nn.CrossEntropyLoss
     dl_dataset_args["transform_type"] = "raw (no transforms)" \
         "+ no preprocessing + crossentropyloss"
-    dl_dataset_args_with_transforms = "masking + no preprocessing" \
+    dl_dataset_args_with_transforms["transform_type"] = "masking + no preprocessing" \
         "+ crossentropyloss"
     # run_handcrafted_features(train_sample, test_sample)
     main_compute([shallow_args, sleepstager_args,
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     shallow_args['criterion'] = torch.nn.NLLLoss
     dl_dataset_args["transform_type"] = "raw (no transforms)" \
         "+ no preprocessing + NLLLoss"
-    dl_dataset_args_with_transforms = "masking + no preprocessing" \
+    dl_dataset_args_with_transforms["transform_type"] = "masking + no preprocessing" \
         "+ NLLLoss"
     # run_handcrafted_features(train_sample, test_sample)
     main_compute([shallow_args, sleepstager_args,
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     shallow_args['criterion'] = torch.nn.CrossEntropyLoss
     dl_dataset_args["transform_type"] = "raw (no transforms)" \
         "+ preprocessing + crossentropyloss"
-    dl_dataset_args_with_transforms = "masking + preprocessing" \
+    dl_dataset_args_with_transforms["transform_type"] = "masking + preprocessing" \
         "+ crossentropyloss"
 
     main_compute([shallow_args, sleepstager_args,
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     shallow_args['criterion'] = torch.nn.NLLLoss
     dl_dataset_args["transform_type"] = "raw (no transforms)" \
         "+ preprocessing + NLLLoss"
-    dl_dataset_args_with_transforms = "masking + preprocessing" \
+    dl_dataset_args_with_transforms["transform_type"] = "masking + preprocessing" \
         "+ NLLLoss"
     # run_handcrafted_features(train_sample, test_sample)
     main_compute([shallow_args, sleepstager_args,
