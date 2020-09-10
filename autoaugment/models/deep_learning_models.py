@@ -1,11 +1,12 @@
 import torch
 from skorch.callbacks import LRScheduler
+from skorch.helper import predefined_split
 from braindecode.models import ShallowFBCSPNet, ChambonSleepStager
 from braindecode.util import set_random_seeds
 from braindecode import EEGClassifier
 
 
-def get_deep_learning_model(model_args):
+def get_deep_learning_model(model_args, valid_dataset):
     cuda = torch.cuda.is_available()
     device = model_args["device"] if cuda else 'cpu'
     if cuda:
@@ -42,7 +43,7 @@ def get_deep_learning_model(model_args):
         criterion=model_args["criterion"],
         optimizer=torch.optim.AdamW,
         # using test_sample for validation
-        train_split=None,
+        train_split=predefined_split(valid_dataset),
         optimizer__lr=model_args["lr"],
         optimizer__weight_decay=model_args["weight_decay"],
         batch_size=model_args["batch_size"],

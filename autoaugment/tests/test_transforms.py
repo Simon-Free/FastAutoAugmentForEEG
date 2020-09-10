@@ -24,7 +24,7 @@ def test_mask_along_axis_nonrandom():
         "axis": 1,
     }
 
-    train_sample, _ = get_dummy_sample()
+    train_sample, _, _ = get_dummy_sample()
 
     X = train_sample[0][0]
 
@@ -63,7 +63,7 @@ def test_mask_along_axis_nonrandom():
 
 
 def test_data_recovery():
-    train_sample, _ = get_dummy_sample()
+    train_sample, _, _ = get_dummy_sample()
     X = train_sample[0][0]
     X_bar = TransformSignal(identity).transform(
         TransformFFT(identity).transform(X)).numpy()

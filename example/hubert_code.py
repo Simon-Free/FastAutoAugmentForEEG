@@ -58,7 +58,7 @@ from braindecode.datautil.preprocess import (
 from braindecode.datasets.sleep_physionet import SleepPhysionet
 mne.set_log_level("WARNING")
 dataset = SleepPhysionet(
-    subject_ids=range(0, 20), recording_ids=[1], crop_wake_mins=0)
+    subject_ids=[0], recording_ids=[1], crop_wake_mins=0)
 # XXX Enable crop_wake_mins once MNE handles cropped files
 
 

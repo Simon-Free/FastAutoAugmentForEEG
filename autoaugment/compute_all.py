@@ -7,29 +7,36 @@ from .retrieve_data import get_sample
 
 
 def main_compute(model_args_list, dataset_args_list, train_dataset,
-                 test_dataset, sample_size_list, saving_params):
+                 valid_dataset, test_dataset, sample_size_list, saving_params):
     """
     Train every models given in entry, on their associated dataset.
-    Return their validation accuracy on the test_dataset.
+    Store their validation accuracy on the test_dataset in a dict, and
+    pickle it. Returns None.
 
     Parameters
     ----------
     model_args_list: dict
         contains all informations needed for model creation and training,
-        keys needed depends of the model.
+        keys needed depends of the model, see config.py.
     dataset_args_list: dict
-
-    window_stride_samples: int
-        stride between windows
-    drop_last_window: bool
-        whether or not have a last overlapping window, when
-        windows do not equally divide the continuous signal
+        contains all informations needed for dataset creation and
+        preprocessing.
+    train_dataset: BaseConcatDataset
+        dataset on which the model will be trained.
+    valid_dataset: BaseConcatDataset
+        dataset on which accuracy will be controlled at each epoch, for
+        deep learning models
+    test_dataset: BaseConcatDataset
+        dataset on which the accuracy will be finally tested at the end
+        of the training
+    sample_size_list: list
+        list of the proportions used to build the learning curve
+    saving_params: dict
+        informations useful for results saving
 
     Returns
     -------
-    windows_datasets: BaseConcatDataset
-        X and y transformed to a dataset format that is compatible with skorch
-        and braindecode
+    None
     """
 
     saving_params = update_saving_params(saving_params)
@@ -50,6 +57,7 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
             score = compute_experimental_result(model_args,
                                                 dataset_args,
                                                 train_dataset,
+                                                valid_dataset,
                                                 test_dataset,
                                                 sample_size)
             if key not in result_dict.keys():
@@ -63,6 +71,7 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
 def compute_experimental_result(model_args,
                                 dataset_args,
                                 train_dataset,
+                                valid_dataset,
                                 test_dataset,
                                 sample_size):
 
@@ -74,7 +83,7 @@ def compute_experimental_result(model_args,
         train_subset = get_sample(train_dataset,
                                   sample_size,
                                   random_state=i)
-        model = initialize_model(model_args, train_subset)
+        model = initialize_model(model_args, train_subset, valid_dataset)
         model = fit_model(model, model_args, train_subset)
         score_list.append(get_score(model, model_args, test_dataset))
 

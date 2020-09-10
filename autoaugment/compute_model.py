@@ -26,13 +26,13 @@ def compute_experimental_result(model_args,
     return score_list
 
 
-def initialize_model(model_args, train_sample):
+def initialize_model(model_args, train_sample, valid_dataset):
     if model_args["model_type"] in ["ShallowFBCSPNet", "ChambonSleepStager"]:
         model_args["n_classes"] = len(set(
             [train_sample[i][1] for i in range(len(train_sample))]))
         model_args["n_chans"] = int(train_sample[0][0].shape[0])
         model_args["input_window_samples"] = int(train_sample[0][0].shape[1])
-        clf = get_deep_learning_model(model_args)
+        clf = get_deep_learning_model(model_args, valid_dataset)
         return clf
     if model_args["model_type"] == "RandomForest":
         clf = get_randomforest(model_args)

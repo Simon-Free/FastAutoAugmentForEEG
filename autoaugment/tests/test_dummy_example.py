@@ -14,27 +14,27 @@ sample_size_list = [1]
 saving_params["result_dict_name"] = "dummy_dict"
 
 
-def dummy_shallownet(train_sample, test_sample):
+def dummy_shallownet(train_sample, valid_sample, test_sample):
     main_compute([shallow_args], [dl_dataset_args],
-                 train_sample, test_sample,
+                 train_sample, valid_sample, test_sample,
                  sample_size_list, saving_params)
 
 
-def dummy_handcrafted_features(train_sample, test_sample):
+def dummy_handcrafted_features(train_sample, valid_sample, test_sample):
     main_compute([hf_args], [hf_dataset_args],
-                 train_sample, test_sample,
+                 train_sample, valid_sample, test_sample,
                  sample_size_list, saving_params)
 
 
 def test_dummy_shallownet():
-    train_sample, test_sample = get_dummy_sample()
-    dummy_shallownet(train_sample, test_sample)
+    train_sample, valid_sample, test_sample = get_dummy_sample()
+    dummy_shallownet(train_sample, valid_sample, test_sample)
     plot_result(saving_params)
     assert(True)
 
 
 def test_dummy_handcrafted_features():
-    train_sample, test_sample = get_dummy_sample()
-    dummy_handcrafted_features(train_sample, test_sample)
+    train_sample, valid_sample, test_sample = get_dummy_sample()
+    dummy_handcrafted_features(train_sample, valid_sample, test_sample)
     plot_result(saving_params)
     assert(True)
