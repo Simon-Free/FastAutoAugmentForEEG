@@ -1,7 +1,7 @@
 import torch
 from skorch.callbacks import LRScheduler
 from skorch.helper import predefined_split
-from braindecode.models import ShallowFBCSPNet, ChambonSleepStager
+from braindecode.models import ShallowFBCSPNet, SleepStager
 from braindecode.util import set_random_seeds
 from braindecode import EEGClassifier
 
@@ -24,8 +24,8 @@ def get_deep_learning_model(model_args, valid_dataset):
             input_window_samples=model_args["input_window_samples"],
             final_conv_length='auto',
         )
-    elif model_args["model_name"] == "ChambonSleepStager":
-        model = model = ChambonSleepStager(
+    elif model_args["model_name"] == "SleepStager":
+        model = model = SleepStager(
             n_channels=model_args["n_chans"],
             sfreq=model_args["sfreq"],
             n_classes=model_args["n_classes"],

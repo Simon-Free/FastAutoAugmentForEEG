@@ -27,7 +27,7 @@ def compute_experimental_result(model_args,
 
 
 def initialize_model(model_args, train_sample, valid_dataset):
-    if model_args["model_type"] in ["ShallowFBCSPNet", "ChambonSleepStager"]:
+    if model_args["model_type"] in ["ShallowFBCSPNet", "SleepStager"]:
         model_args["n_classes"] = len(set(
             [train_sample[i][1] for i in range(len(train_sample))]))
         model_args["n_chans"] = int(train_sample[0][0].shape[0])

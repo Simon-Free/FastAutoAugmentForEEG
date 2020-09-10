@@ -48,7 +48,7 @@ import matplotlib.pyplot as plt
 from braindecode import EEGClassifier
 from skorch.callbacks import EpochScoring
 from skorch.helper import predefined_split
-from braindecode.models import ChambonSleepStager
+from braindecode.models import SleepStager
 from braindecode.util import set_random_seeds
 import torch
 import mne
@@ -183,7 +183,7 @@ n_classes = 5
 n_channels = train_set[0][0].shape[0]
 input_size_samples = train_set[0][0].shape[1]
 
-model = ChambonSleepStager(
+model = SleepStager(
     n_channels,
     sfreq,
     n_classes=n_classes,

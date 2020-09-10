@@ -45,8 +45,8 @@ shallow_args = {
     "device": "cuda:1",
 }
 
-chambon_args = {
-    "model_type": "ChambonSleepStager",
+sleepstager_args = {
+    "model_type": "SleepStager",
     "batch_size": 128,
     "seed": None,
     "sfreq": 100,
