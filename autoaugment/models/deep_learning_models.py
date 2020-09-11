@@ -28,7 +28,7 @@ def get_deep_learning_model(model_args, valid_dataset):
         model = model = SleepStager(
             n_channels=model_args["n_chans"],
             sfreq=model_args["sfreq"],
-            n_classes=model_args["n_classes"],
+            n_classes=model_args["n_classes"] + 1,
             input_size_s=model_args["input_window_samples"] /
             model_args["sfreq"]
         )

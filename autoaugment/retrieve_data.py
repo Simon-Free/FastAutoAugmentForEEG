@@ -10,7 +10,7 @@ from braindecode.datautil import create_windows_from_events
 def get_epochs_data(train_subjects=tuple(range(0, 50)),
                     valid_subjects=tuple(range(50, 60)),
                     test_subjects=tuple(range(60, 83)), recording=[1, 2],
-                    preprocessing=True, crop_wake_mins=30):
+                    preprocessing=["scaling", "filtering"], crop_wake_mins=30):
 
     train_sample = build_epoch(
         train_subjects, recording, crop_wake_mins, preprocessing)
@@ -49,14 +49,14 @@ def build_epoch(subjects, recording, crop_wake_mins, preprocessing):
                              crop_wake_mins=crop_wake_mins)
 
     if preprocessing:
-        high_cut_hz = 30
-        preprocessors = [
-            # convert from volt to microvolt,
-            # directly modifying the numpy array
-            NumpyPreproc(fn=lambda x: x * 1e6),
-            # bandpass filter
-            MNEPreproc(fn='filter', l_freq=None, h_freq=high_cut_hz),
-        ]
+        preprocessors = []
+        if "scaling" in preprocessing:
+            preprocessors.append[NumpyPreproc(fn=lambda x: x * 1e6)]
+        if "filtering" in preprocessing:
+            high_cut_hz = 30
+            preprocessors.append(
+                MNEPreproc(fn='filter', l_freq=None, h_freq=high_cut_hz)
+            )
         # Transform the data
         preprocess(dataset, preprocessors)
     mapping = {  # We merge stages 3 and 4 following AASM standards.
