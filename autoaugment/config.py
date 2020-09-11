@@ -66,7 +66,8 @@ hf_args = {"model_type": "RandomForest",
 sample_size_list = [0.01, 0.1, 0.25, 0.5, 1]
 
 saving_params = {
-    "result_dict_name": "main_result_dict"
+    "result_dict_name": "main_result_dict",
+    "main_save_folder": './results/'
 }
 
 if getpass.getuser() == "sfreybur":
