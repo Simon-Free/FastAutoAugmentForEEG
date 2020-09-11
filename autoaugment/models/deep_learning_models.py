@@ -1,5 +1,5 @@
 import torch
-from skorch.callbacks import LRScheduler
+from skorch.callbacks import LRScheduler, EarlyStopping
 from skorch.helper import predefined_split
 from braindecode.models import ShallowFBCSPNet, SleepStager
 from braindecode.util import set_random_seeds
@@ -48,9 +48,13 @@ def get_deep_learning_model(model_args, valid_dataset):
         optimizer__weight_decay=model_args["weight_decay"],
         batch_size=model_args["batch_size"],
         callbacks=[
-            "accuracy", ("lr_scheduler",
-                         LRScheduler('CosineAnnealingLR',
-                                     T_max=model_args["n_epochs"] - 1)),
+            "accuracy",
+            ("lr_scheduler",
+             LRScheduler('CosineAnnealingLR',
+                         T_max=model_args["n_epochs"] - 1)),
+            ("early_stopping",
+             EarlyStopping(monitor='valid_loss',
+                           patience=model_args["patience"]))
         ],
         device=device,
     )  # torch.in torch.out

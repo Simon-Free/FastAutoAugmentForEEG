@@ -6,13 +6,13 @@ from autoaugment.learning_curve import plot_result
 from autoaugment.config import dl_dataset_args, hf_dataset_args, \
     shallow_args, saving_params, hf_args, sleepstager_args
 
-
 mne.set_log_level("WARNING")
 
 shallow_args["n_epochs"] = 3
 hf_args["n_cross_val"] = 3
 sample_size_list = [1]
 saving_params["result_dict_name"] = "dummy_dict"
+shallow_args["criterion"] = torch.nn.CrossEntropyLoss
 
 
 def dummy_shallownet(train_sample, valid_sample, test_sample):

@@ -41,8 +41,9 @@ shallow_args = {
     "weight_decay": 0,
     "n_epochs": 100,
     "n_cross_val": 3,
-    "criterion": torch.nn.NLLLoss,
+    "criterion": torch.nn.CrossEntropyLoss,
     "device": "cuda:1",
+    "patience": 5
 }
 
 sleepstager_args = {
@@ -56,6 +57,7 @@ sleepstager_args = {
     "n_cross_val": 3,
     "criterion": torch.nn.CrossEntropyLoss,
     "device": "cuda:2",
+    "patience": 5
 }
 
 hf_args = {"model_type": "RandomForest",

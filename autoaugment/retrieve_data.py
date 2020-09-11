@@ -51,7 +51,7 @@ def build_epoch(subjects, recording, crop_wake_mins, preprocessing):
     if preprocessing:
         preprocessors = []
         if "scaling" in preprocessing:
-            preprocessors.append[NumpyPreproc(fn=lambda x: x * 1e6)]
+            preprocessors.append(NumpyPreproc(fn=lambda x: x * 1e6))
         if "filtering" in preprocessing:
             high_cut_hz = 30
             preprocessors.append(
