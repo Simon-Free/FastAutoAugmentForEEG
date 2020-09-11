@@ -21,9 +21,6 @@ if __name__ == "__main__":
         test_subjects=range(15, 25),
         preprocessing=[])
 
-    import ipdb
-    ipdb.set_trace()
-
     dl_dataset_args["transform_type"] = "raw (no transforms)" \
         "+ no preprocessing"
 

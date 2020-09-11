@@ -1,4 +1,5 @@
 import mne
+import torch
 from autoaugment.tests.utils import get_dummy_sample
 from autoaugment.compute_all import main_compute
 from autoaugment.learning_curve import plot_result
