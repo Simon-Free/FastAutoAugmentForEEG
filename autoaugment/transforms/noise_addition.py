@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def merge_two_signals(datum, params):
+def add_noise_to_signal(datum, params):
 
     signal = datum.X
     noise = np.random.normal(

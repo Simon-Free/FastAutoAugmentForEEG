@@ -3,7 +3,7 @@ import numpy as np
 from PyEMD import EMD
 
 
-def merge_two_emfs(datum, params):
+def merge_two_imfs(datum, params):
     signal = datum.X
     y = datum.y
     train_sample = params["train_sample"]

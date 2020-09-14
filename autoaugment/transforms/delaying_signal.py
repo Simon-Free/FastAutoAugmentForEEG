@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def merge_two_signals(datum, params):
+def delay_signal(datum, params):
 
     signal = datum.X
     index = datum.index
