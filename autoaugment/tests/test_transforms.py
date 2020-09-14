@@ -6,6 +6,7 @@ from braindecode.datasets.transform_classes import TransformSignal, \
 from autoaugment.transforms.identity import identity
 from autoaugment.tests.utils import get_dummy_sample
 from autoaugment.transforms.masking import mask_along_axis
+from autoaugment.retrieve_data import create_label_index_dict
 
 
 def test_mask_along_axis_nonrandom():
@@ -68,3 +69,10 @@ def test_data_recovery():
     X_bar = TransformSignal(identity).transform(
         TransformFFT(identity).transform(X)).numpy()
     assert_almost_equal(X_bar, X, decimal=3)
+
+
+def test_label_index_dict_creation():
+    train_sample, _, _ = get_dummy_sample()
+    label_index_dict = create_label_index_dict(train_sample)
+    assert label_index_dict == \
+        {0: [0], 1: [4], 2: [1], 3: [2], 4: [3]}

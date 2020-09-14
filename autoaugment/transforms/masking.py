@@ -2,7 +2,7 @@ import torch
 
 
 def mask_along_axis(
-        specgram, params):
+        specgram, y, params):
     r"""
     Apply a mask along ``axis``. Mask will be applied from indices
     ``[v_0, v_0 + v)``, where
@@ -21,8 +21,8 @@ def mask_along_axis(
         Tensor: Masked spectrogram of dimensions (channel, freq, time)
     """
 
-    mask_start = (torch.tensor(params["mask_start"]).long()).squeeze()
-    mask_end = (torch.tensor(params["mask_end"]).long()).squeeze()
+    mask_start = params["mask_start"]
+    mask_end = params["mask_end"]
 
     if params["axis"] == 1:
         specgram[:, mask_start:mask_end, :, :] = params["mask_value"]
@@ -35,7 +35,7 @@ def mask_along_axis(
 
 
 def mask_along_axis_random(
-        specgram, params):
+        specgram, y, params):
 
     value = torch.rand(1) \
         * params['mask_max_proportion'] * specgram.size(params["axis"])

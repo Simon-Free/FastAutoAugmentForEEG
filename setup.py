@@ -11,6 +11,7 @@ setup(
         'braindecode @ git+https://github.com/Simon-Free/'
         'braindecode@experimentation_data_aug',
         'mne @ git+https://github.com/mne-tools/mne-python',
+        'EMD-signal',
         'seaborn', 'torch'
     ]
 )

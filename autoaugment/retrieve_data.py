@@ -80,3 +80,14 @@ def build_epoch(subjects, recording, crop_wake_mins, preprocessing):
         mapping=mapping)
 
     return(windows_dataset)
+
+
+def create_label_index_dict(train_dataset):
+    y = [train_dataset[i][1] for i in range(len(train_dataset))]
+    list_labels = list(set(y))
+    label_index_dict = {}
+    for label in list_labels:
+        label_index_dict[label] = []
+    for i in range(len(y)):
+        label_index_dict[y[i]].append(i)
+    return(label_index_dict)
