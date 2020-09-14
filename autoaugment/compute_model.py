@@ -1,31 +1,7 @@
 import numpy as np
 from sklearn.metrics import accuracy_score
-from .retrieve_data import get_sample
 from .models.deep_learning_models import get_deep_learning_model
 from .models.handcrafted_features import get_randomforest
-from .retrieve_data import create_label_index_dict
-
-
-def compute_experimental_result(model_args,
-                                dataset_args,
-                                train_dataset,
-                                test_dataset,
-                                sample_size):
-
-    train_dataset.change_transform_list(dataset_args["transform_list"])
-    score_list = []
-
-    for i in range(model_args["n_cross_val"]):
-
-        train_subset = get_sample(train_dataset,
-                                  sample_size,
-                                  random_state=i)
-        label_index_dict = create_label_index_dict(train_dataset)
-        model = initialize_model(model_args, train_subset)
-        model = fit_model(model, model_args, train_subset)
-        score_list.append(get_score(model, model_args, test_dataset))
-
-    return score_list
 
 
 def initialize_model(model_args, train_sample, valid_dataset):

@@ -1,10 +1,19 @@
-import os
-import torch
-from braindecode.datasets.transform_classes import TransformSignal, \
-    TransformFFT
-from autoaugment.transforms.identity import identity, identity_ml
-from autoaugment.transforms.masking import mask_along_axis_random
 import getpass
+import torch
+import os
+
+
+transforms_args = {
+    "masking_random_time":
+        {"mask_value": 0.0,
+         "axis": 2
+         },
+    "masking_random_frequency":
+        {"mask_value": 0.0,
+         "axis": 1},
+    "emd_decomposition":
+        {"max_imfs": 12},
+}
 
 params_masking_random = {"mask_value": 0.0,
                          "mask_max_proportion": 0.1,
@@ -12,26 +21,23 @@ params_masking_random = {"mask_value": 0.0,
 
 
 dl_dataset_args = {"transform_type": "raw (no transforms)",
-                   "transform_list": [[TransformSignal(identity)]]}
+                   "transform_list": [["identity"]]}
 
 hf_dataset_args = {"transform_type": "raw (no transforms)",
-                   "transform_list": [[TransformSignal(identity_ml)]]}
+                   "transform_list": [["identity_ml"]]}
 
 dl_dataset_args_with_transforms = {
     "transform_type": "included masking transforms",
-    "transform_list": [[TransformSignal(identity)],
-                       [TransformFFT(mask_along_axis_random,
-                                     params_masking_random),
-                        TransformSignal(identity)]],
+    "transform_list": [["identity"],
+                       ["mask_along_axis_random", "identity"]],
     "preprocessing": True}
 
 hf_dataset_args_with_transforms = {
     "transform_type": "included masking transforms",
     "transform_list": [
-        [TransformSignal(identity_ml)],
-        [TransformFFT(mask_along_axis_random,
-                      params_masking_random),
-         TransformSignal(identity_ml)]]}
+        ["identity_ml"],
+        ["mask_along_axis_random", "identity_ml"]]
+}
 
 shallow_args = {
     "model_type": "ShallowFBCSPNet",

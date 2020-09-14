@@ -7,10 +7,13 @@ from .utils import update_saving_params
 from .compute_model import initialize_model, get_score, fit_model
 from .retrieve_data import get_sample
 from .transforms.randaugment_transform import rand_transf
+from .retrieve_data import create_label_index_dict
+from .construct_transforms import construct_transforms
 
 
-def main_compute(model_args_list, dataset_args_list, train_dataset,
-                 valid_dataset, test_dataset, sample_size_list, saving_params):
+def main_compute(model_args_list, dataset_args_list, transforms_args,
+                 train_dataset, valid_dataset, test_dataset,
+                 sample_size_list, saving_params):
     """
     Train every models given in entry, on their associated dataset.
     Store their validation accuracy on the test_dataset in a dict, and
@@ -61,6 +64,7 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
                   " with sample size " + str(sample_size))
             score = compute_experimental_result(model_args,
                                                 dataset_args,
+                                                transforms_args,
                                                 train_dataset,
                                                 valid_dataset,
                                                 test_dataset,
@@ -71,28 +75,6 @@ def main_compute(model_args_list, dataset_args_list, train_dataset,
 
     with open(result_dict_path, 'wb') as handle:
         pickle.dump(result_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-def compute_experimental_result(model_args,
-                                dataset_args,
-                                train_dataset,
-                                valid_dataset,
-                                test_dataset,
-                                sample_size):
-
-    train_dataset.change_transform_list(dataset_args["transform_list"])
-    score_list = []
-
-    for i in range(model_args["n_cross_val"]):
-
-        train_subset = get_sample(train_dataset,
-                                  sample_size,
-                                  random_state=i)
-        model = initialize_model(model_args, train_subset, valid_dataset)
-        model = fit_model(model, model_args, train_subset)
-        score_list.append(get_score(model, model_args, test_dataset))
-
-    return score_list
 
 
 def main_compute_with_randaugment(
@@ -151,7 +133,8 @@ def main_compute_with_randaugment(
                 for n_transf in range(model_args["max_n_transf"]):
                     model_args["magnitude"] = magnitude
                     model_args["n_transf"] = n_transf
-                    dataset_args["transform_list"] = TransformSignal()
+                    dataset_args["transform_list"] = TransformSignal(
+                        rand_transf)
                     score = compute_experimental_result(
                         model_args,
                         dataset_args,
@@ -167,3 +150,33 @@ def main_compute_with_randaugment(
 
     with open(result_dict_path, 'wb') as handle:
         pickle.dump(result_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def compute_experimental_result(model_args,
+                                dataset_args,
+                                train_dataset,
+                                test_dataset,
+                                transforms_args,
+                                sample_size):
+
+    dataset_args["constructed_transform_list"] = construct_transforms(
+        dataset_args, transforms_args)
+
+    score_list = []
+
+    for i in range(model_args["n_cross_val"]):
+
+        train_subset = get_sample(train_dataset,
+                                  sample_size,
+                                  random_state=i)
+        transforms_args["label_index_dict"] = create_label_index_dict(
+            train_subset)
+
+        train_dataset.change_transform_list(
+            dataset_args["constructed_transform_list"])
+
+        model = initialize_model(model_args, train_subset)
+        model = fit_model(model, model_args, train_subset)
+        score_list.append(get_score(model, model_args, test_dataset))
+
+    return score_list
