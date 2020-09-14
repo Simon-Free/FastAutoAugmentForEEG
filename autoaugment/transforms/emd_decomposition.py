@@ -3,8 +3,9 @@ import numpy as np
 from PyEMD import EMD
 
 
-def merge_two_emfs(signal, y, params):
-
+def merge_two_emfs(datum, params):
+    signal = datum.X
+    y = datum.y
     train_sample = params["train_sample"]
     label_index_dict = params["label_index_dict"]
     other_signal_index = random.choice(label_index_dict[y])
@@ -17,7 +18,8 @@ def merge_two_emfs(signal, y, params):
             final_signal += other_imfs_signal[i, :]
         else:
             final_signal += imfs_signal[i, :]
-    return(final_signal)
+    datum.X = final_signal
+    return datum
 
 
 def get_same_shaped_imfs(signal):

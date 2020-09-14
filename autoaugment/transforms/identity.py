@@ -1,6 +1,7 @@
-def identity(X, params={}):
-    return X
+def identity(datum, params={}):
+    return datum
 
 
-def identity_ml(X, params={}):
-    return(X.numpy())
+def identity_ml(datum, params={}):
+    datum.X = datum.X.numpy()
+    return(datum)
