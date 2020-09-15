@@ -4,15 +4,19 @@ import os
 
 
 transforms_args = {
-    "masking_random_time":
+    "n_transf": 1,
+    "magnitude": 0.1,
+    "masking_along_time":
         {"mask_value": 0.0,
          "axis": 2
          },
-    "masking_random_frequency":
+    "masking_along_frequency":
         {"mask_value": 0.0,
-         "axis": 1},
+         "axis": 1
+         },
     "emd_decomposition":
-        {"max_imfs": 12},
+        {"max_imfs": 12
+         },
 }
 
 params_masking_random = {"mask_value": 0.0,
@@ -23,20 +27,22 @@ params_masking_random = {"mask_value": 0.0,
 dl_dataset_args = {"transform_type": "raw (no transforms)",
                    "transform_list": [["identity"]]}
 
+
 hf_dataset_args = {"transform_type": "raw (no transforms)",
                    "transform_list": [["identity_ml"]]}
+
 
 dl_dataset_args_with_transforms = {
     "transform_type": "included masking transforms",
     "transform_list": [["identity"],
-                       ["mask_along_axis_random", "identity"]],
+                       ["mask_along_time", "identity"]],
     "preprocessing": True}
 
 hf_dataset_args_with_transforms = {
     "transform_type": "included masking transforms",
     "transform_list": [
         ["identity_ml"],
-        ["mask_along_axis_random", "identity_ml"]]
+        ["mask_along_time", "identity_ml"]]
 }
 
 shallow_args = {

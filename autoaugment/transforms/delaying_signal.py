@@ -1,18 +1,17 @@
 import numpy as np
+import torch
 
 
 def delay_signal(datum, params):
 
     signal = datum.X
-    index = datum.index
-    if index != 0:
-        new_signal = np.zeros(signal.shape)
-        value_magnitude = np.round(params["magnitude"] * signal.shape)
-        new_signal[:value_magnitude] = signal[-value_magnitude:]
-        new_signal[value_magnitude:] = signal[:-value_magnitude]
-        datum.X = new_signal
+    new_signal = torch.zeros(signal.shape)
+    value_magnitude = int(np.round(params["magnitude"] * signal.shape[1]))
+    new_signal[:, :value_magnitude] = signal[:, -value_magnitude:]
+    new_signal[:, value_magnitude:] = signal[:, :-value_magnitude]
+    datum.X = new_signal
 
-    return datum.X
+    return datum
 
 
 # Not Working when subsampling, lots of problem ...

@@ -1,12 +1,18 @@
+from numpy.testing._private.utils import assert_array_equal
+from testfixtures import compare
 import numpy as np
 from numpy.testing import assert_almost_equal
 
+from braindecode.datasets.base import Datum
 from braindecode.datasets.transform_classes import TransformSignal, \
     TransformFFT
 from autoaugment.transforms.identity import identity
 from autoaugment.tests.utils import get_dummy_sample
-from autoaugment.transforms.masking import mask_along_axis
+from autoaugment.transforms.masking import mask_along_axis, \
+    mask_along_time
 from autoaugment.retrieve_data import create_label_index_dict
+from autoaugment.construct_transforms import construct_transforms
+from autoaugment.config import transforms_args
 
 
 def test_mask_along_axis_nonrandom():
@@ -27,18 +33,19 @@ def test_mask_along_axis_nonrandom():
 
     train_sample, _, _ = get_dummy_sample()
 
-    X = train_sample[0][0]
+    datum = Datum(X=train_sample[0][0], y=train_sample[0][1])
+    datum_with_tr = Datum(X=train_sample[0][0], y=train_sample[0][1])
 
-    spec = TransformFFT(identity).transform(X)
-    spec_with_tr = TransformFFT(
+    datum_spec = TransformFFT(identity).transform(datum)
+    datum_spec_with_tr = TransformFFT(
         mask_along_axis, params_masking_nonrandom_test_1
-    ).transform(X)
-    spec_with_tr = TransformFFT(
+    ).transform(datum_with_tr)
+    datum_spec_with_tr = TransformFFT(
         mask_along_axis, params_masking_nonrandom_test_2
-    ).transform(spec_with_tr)
+    ).transform(datum_spec_with_tr)
 
-    img = spec[0, :, :, 0].numpy()
-    img_with_zeros = spec_with_tr[0, :, :, 0].numpy()
+    img = datum_spec.X[0, :, :, 0].numpy()
+    img_with_zeros = datum_with_tr.X[0, :, :, 0].numpy()
     # first, asserting masked transform contains at least
     # one row with zeros.
     line_has_zeros = np.all((img_with_zeros == 0.0), axis=0)
@@ -65,10 +72,13 @@ def test_mask_along_axis_nonrandom():
 
 def test_data_recovery():
     train_sample, _, _ = get_dummy_sample()
+
     X = train_sample[0][0]
-    X_bar = TransformSignal(identity).transform(
-        TransformFFT(identity).transform(X)).numpy()
-    assert_almost_equal(X_bar, X, decimal=3)
+    datum = Datum(X=X, y=train_sample[0][1])
+    datum = TransformSignal(identity).transform(
+        TransformFFT(identity).transform(datum))
+
+    assert_almost_equal(datum.X.numpy(), X, decimal=3)
 
 
 def test_label_index_dict_creation():
@@ -76,3 +86,31 @@ def test_label_index_dict_creation():
     label_index_dict = create_label_index_dict(train_sample)
     assert label_index_dict == \
         {0: [0], 1: [4], 2: [1], 3: [2], 4: [3]}
+
+
+def test_transform_construction():
+
+    transforms = {"transform_list": [["identity"],
+                                     ["mask_along_time",
+                                      "identity"]]}
+
+    constructed_transforms = [[TransformSignal(identity, transforms_args)],
+                              [TransformFFT(mask_along_time,
+                                            transforms_args),
+                               TransformSignal(identity, transforms_args)]]
+
+    compare(construct_transforms(transforms, transforms_args),
+            constructed_transforms)
+
+
+def test_delay_signal():
+
+    train_sample, _, _ = get_dummy_sample()
+    transforms = {"transform_list": [["delay_signal"]]}
+    delay_signal = construct_transforms(transforms, transforms_args)[0][0]
+    X = train_sample[0][0]
+    datum = Datum(X=X, y=train_sample[0][1])
+    datum = delay_signal.transform(datum)
+    value_cutoff = int(np.round(transforms_args["magnitude"] * X.shape[1]))
+    assert_array_equal(X[:, -value_cutoff:], datum.X[:, :value_cutoff])
+    assert_array_equal(X[:, :-value_cutoff], datum.X[:, value_cutoff:])

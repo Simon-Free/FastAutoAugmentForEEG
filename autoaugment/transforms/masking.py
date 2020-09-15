@@ -39,7 +39,7 @@ def mask_along_axis_random(datum, params):
 
     specgram = datum.X
     value = torch.rand(1) \
-        * params['mask_max_proportion'] * specgram.size(params["axis"])
+        * params['magnitude'] * specgram.size(params["axis"])
 
     min_value = torch.rand(1) * (specgram.size(params["axis"]) - value)
 
@@ -47,4 +47,22 @@ def mask_along_axis_random(datum, params):
     params["mask_end"] = (min_value.long() + value.long()).squeeze()
 
     datum = mask_along_axis(datum, params)
+    return datum
+
+
+def mask_along_time(datum, params):
+
+    params_time = params["masking_along_time"]
+    params_time["magnitude"] = params["magnitude"]
+
+    datum = mask_along_axis(datum, params_time)
+    return datum
+
+
+def mask_along_frequency(datum, params):
+
+    params_frequency = params["masking_along_frequency"]
+    params_frequency["magnitude"] = params["magnitude"]
+
+    datum = mask_along_axis(datum, params_frequency)
     return datum

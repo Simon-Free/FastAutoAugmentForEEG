@@ -1,5 +1,4 @@
 
-from unittest.main import main
 import numpy as np
 from joblib import Memory
 

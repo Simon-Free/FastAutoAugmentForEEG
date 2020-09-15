@@ -154,9 +154,10 @@ def main_compute_with_randaugment(
 
 def compute_experimental_result(model_args,
                                 dataset_args,
-                                train_dataset,
-                                test_dataset,
                                 transforms_args,
+                                train_dataset,
+                                valid_dataset,
+                                test_dataset,
                                 sample_size):
 
     dataset_args["constructed_transform_list"] = construct_transforms(
@@ -175,7 +176,7 @@ def compute_experimental_result(model_args,
         train_dataset.change_transform_list(
             dataset_args["constructed_transform_list"])
 
-        model = initialize_model(model_args, train_subset)
+        model = initialize_model(model_args, train_subset, valid_dataset)
         model = fit_model(model, model_args, train_subset)
         score_list.append(get_score(model, model_args, test_dataset))
 
