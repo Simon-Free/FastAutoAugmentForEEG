@@ -1,6 +1,6 @@
+import os
 import getpass
 import torch
-import os
 
 
 transforms_args = {
@@ -17,6 +17,14 @@ transforms_args = {
     "em_decomposition":
         {"max_imfs": 12
          },
+    "randaugment_transform_list":
+        ["identity",
+         "mask_along_time",
+         "mask_along_frequency",
+         "merge_two_signals",
+         "delay_signal",
+         "add_noise_to_signal",
+         "merge_two_emd"]
 }
 
 params_masking_random = {"mask_value": 0.0,
@@ -35,14 +43,24 @@ hf_dataset_args = {"transform_type": "raw (no transforms)",
 dl_dataset_args_with_transforms = {
     "transform_type": "included masking transforms",
     "transform_list": [["identity"],
-                       ["mask_along_time", "identity"]],
-    "preprocessing": True}
+                       ["mask_along_time", "identity"],
+                       ["mask_along_frequency", "identity"],
+                       ["merge_two_signals"],
+                       ["delay_signal"],
+                       ["add_noise_to_signal"],
+                       ["merge_two_emd"]],
+}
 
 hf_dataset_args_with_transforms = {
     "transform_type": "included masking transforms",
     "transform_list": [
         ["identity_ml"],
-        ["mask_along_time", "identity_ml"]]
+        ["mask_along_time", "identity_ml"],
+        ["mask_along_frequency", "identity_ml"],
+        ["merge_two_signals"],
+        ["delay_signal"],
+        ["add_noise_to_signal"],
+        ["merge_two_emd"]]
 }
 
 shallow_args = {

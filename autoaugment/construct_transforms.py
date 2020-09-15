@@ -1,3 +1,4 @@
+import random
 from braindecode.datasets.transform_classes import TransformSignal, \
     TransformFFT
 
@@ -31,6 +32,9 @@ def construct_transforms(dataset_args, transforms_args):
             elif operation == "merge_two_emd":
                 transform.append(TransformSignal(
                     merge_two_emd, transforms_args))
+            elif operation == "randaugment":
+                transform.append(TransformSignal(
+                    construct_randaugment, transforms_args))
             elif operation == "mask_along_time":
                 transform.append(TransformFFT(
                     mask_along_time, transforms_args))
@@ -42,3 +46,17 @@ def construct_transforms(dataset_args, transforms_args):
                     "This transform is currently not implemented")
         transform_list.append(transform)
     return transform_list
+
+
+def construct_randaugment(datum, params):
+
+    n_transf = params["n_transf"]
+    chosen_transf = random.choices(
+        params["randaugment_transform_list"], k=n_transf)
+    chosen_transf.append("identity")
+    wrapped_chosen_transf = {"transform_list": [chosen_transf]}
+    constructed_chosen_transf = construct_transforms(
+        wrapped_chosen_transf, params)
+    for transf in constructed_chosen_transf[0]:
+        datum = transf.transform(datum)
+    return(datum)

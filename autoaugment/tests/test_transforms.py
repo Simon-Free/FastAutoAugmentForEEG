@@ -1,5 +1,5 @@
 from numpy.testing._private.utils import assert_array_equal, \
-    assert_array_almost_equal, assert_equal
+    assert_array_almost_equal
 from testfixtures import compare
 import numpy as np
 import torch
@@ -163,3 +163,18 @@ def test_noise_addition():
     )/transforms_args["magnitude"]
     assert_almost_equal(np.mean(remains.numpy())/scale, 0, 2)
     assert_almost_equal(np.var(remains.numpy())/(scale*scale), 1, 1)
+
+
+def test_randaugment():
+
+    train_sample, _, _ = get_dummy_sample()
+    transforms_args["train_sample"] = train_sample
+    transforms_args["n_transf"] = 5
+    transforms = {"transform_list": [["randaugment"]]}
+    randaugment = construct_transforms(
+        transforms, transforms_args)[0][0]
+    transforms_args["label_index_dict"] = create_label_index_dict(
+        transforms_args["train_sample"])
+    X = train_sample[0][0]
+    datum = Datum(X=X, y=train_sample[0][1])
+    datum = randaugment.transform(datum)

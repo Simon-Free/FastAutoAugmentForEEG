@@ -55,7 +55,7 @@ def mask_along_time(datum, params):
     params_time = params["masking_along_time"]
     params_time["magnitude"] = params["magnitude"]
 
-    datum = mask_along_axis(datum, params_time)
+    datum = mask_along_axis_random(datum, params_time)
     return datum
 
 
@@ -64,5 +64,5 @@ def mask_along_frequency(datum, params):
     params_frequency = params["masking_along_frequency"]
     params_frequency["magnitude"] = params["magnitude"]
 
-    datum = mask_along_axis(datum, params_frequency)
+    datum = mask_along_axis_random(datum, params_frequency)
     return datum

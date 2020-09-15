@@ -6,7 +6,7 @@ from braindecode.datasets.transform_classes import TransformSignal
 from .utils import update_saving_params
 from .compute_model import initialize_model, get_score, fit_model
 from .retrieve_data import get_sample
-from .transforms.randaugment_transform import rand_transf
+from .transforms.randaugment_transform import randaugment
 from .retrieve_data import create_label_index_dict
 from .construct_transforms import construct_transforms
 
@@ -134,7 +134,7 @@ def main_compute_with_randaugment(
                     model_args["magnitude"] = magnitude
                     model_args["n_transf"] = n_transf
                     dataset_args["transform_list"] = TransformSignal(
-                        rand_transf)
+                        randaugment)
                     score = compute_experimental_result(
                         model_args,
                         dataset_args,
@@ -172,7 +172,7 @@ def compute_experimental_result(model_args,
                                   random_state=i)
         transforms_args["label_index_dict"] = create_label_index_dict(
             train_subset)
-
+        transforms_args["train_sample"] = train_subset
         train_dataset.change_transform_list(
             dataset_args["constructed_transform_list"])
 

@@ -26,7 +26,10 @@ def merge_two_emd(datum, params):
 
 def get_same_shaped_imfs(signal):
     emd = EMD(max_imfs=12)
-    imfs_signal = emd(signal.numpy())
+    try:
+        imfs_signal = emd(signal.numpy())
+    except AttributeError:
+        imfs_signal = emd(signal)
     new_imfs = np.zeros((12, signal.shape[0]))
     new_imfs[:imfs_signal.shape[0], :] = imfs_signal
     return new_imfs
