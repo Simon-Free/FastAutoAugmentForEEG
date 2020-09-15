@@ -1,11 +1,13 @@
 import numpy as np
+import torch
 
 
 def add_noise_to_signal(datum, params):
 
     signal = datum.X
-    noise = np.random.normal(
-        loc=0.0, scale=np.mean(np.abs(signal)), size=None)
+    scale = torch.mean(torch.abs(signal)).item()
+    noise = torch.Tensor(np.random.normal(
+        loc=0.0, scale=scale, size=signal.shape))
     final_signal = (1 - params["magnitude"])*signal + params["magnitude"]*noise
     datum.X = final_signal
     return datum

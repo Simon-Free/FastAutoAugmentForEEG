@@ -14,7 +14,7 @@ transforms_args = {
         {"mask_value": 0.0,
          "axis": 1
          },
-    "emd_decomposition":
+    "em_decomposition":
         {"max_imfs": 12
          },
 }

@@ -1,6 +1,8 @@
-from numpy.testing._private.utils import assert_array_equal
+from numpy.testing._private.utils import assert_array_equal, \
+    assert_array_almost_equal, assert_equal
 from testfixtures import compare
 import numpy as np
+import torch
 from numpy.testing import assert_almost_equal
 
 from braindecode.datasets.base import Datum
@@ -72,7 +74,6 @@ def test_mask_along_axis_nonrandom():
 
 def test_data_recovery():
     train_sample, _, _ = get_dummy_sample()
-
     X = train_sample[0][0]
     datum = Datum(X=X, y=train_sample[0][1])
     datum = TransformSignal(identity).transform(
@@ -114,3 +115,51 @@ def test_delay_signal():
     value_cutoff = int(np.round(transforms_args["magnitude"] * X.shape[1]))
     assert_array_equal(X[:, -value_cutoff:], datum.X[:, :value_cutoff])
     assert_array_equal(X[:, :-value_cutoff], datum.X[:, value_cutoff:])
+
+
+def test_em_decomposition():
+    train_sample, _, _ = get_dummy_sample()
+    transforms_args["train_sample"] = train_sample
+    transforms = {"transform_list": [["merge_two_emd"]]}
+    merge_two_emd = construct_transforms(transforms, transforms_args)[0][0]
+    transforms_args["label_index_dict"] = create_label_index_dict(
+        transforms_args["train_sample"])
+    X = train_sample[0][0]
+    datum = Datum(X=X, y=train_sample[0][1])
+    datum = merge_two_emd.transform(datum)
+    assert_array_equal(X, datum.X)
+    assert_array_equal(X, datum.X)
+
+
+def test_signal_addition():
+    train_sample, _, _ = get_dummy_sample()
+    transforms_args["train_sample"] = train_sample
+    transforms = {"transform_list": [["merge_two_signals"]]}
+    merge_two_signals = construct_transforms(transforms, transforms_args)[0][0]
+    transforms_args["label_index_dict"] = create_label_index_dict(
+        transforms_args["train_sample"])
+    X = train_sample[0][0]
+    datum = Datum(X=X, y=train_sample[0][1])
+    datum = merge_two_signals.transform(datum)
+    assert_array_almost_equal(X, datum.X, 5)
+    assert_array_almost_equal(X, datum.X, 5)
+
+
+def test_noise_addition():
+
+    train_sample, _, _ = get_dummy_sample()
+    transforms_args["train_sample"] = train_sample
+    transforms = {"transform_list": [["add_noise_to_signal"]]}
+    add_noise_to_signal = construct_transforms(
+        transforms, transforms_args)[0][0]
+    transforms_args["label_index_dict"] = create_label_index_dict(
+        transforms_args["train_sample"])
+    X = train_sample[0][0]
+    scale = torch.mean(torch.abs(X)).item()
+    datum = Datum(X=X, y=train_sample[0][1])
+    datum = add_noise_to_signal.transform(datum)
+    remains = (
+        datum.X - X*(1 - transforms_args["magnitude"])
+    )/transforms_args["magnitude"]
+    assert_almost_equal(np.mean(remains.numpy())/scale, 0, 2)
+    assert_almost_equal(np.var(remains.numpy())/(scale*scale), 1, 1)

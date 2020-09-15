@@ -7,7 +7,7 @@ from .transforms.noise_addition import add_noise_to_signal
 from .transforms.masking import mask_along_time, \
     mask_along_frequency
 from .transforms.identity import identity, identity_ml
-from .transforms.em_decomposition import merge_two_imfs
+from .transforms.em_decomposition import merge_two_emd
 
 
 def construct_transforms(dataset_args, transforms_args):
@@ -28,9 +28,9 @@ def construct_transforms(dataset_args, transforms_args):
             elif operation == "add_noise_to_signal":
                 transform.append(TransformSignal(
                     add_noise_to_signal, transforms_args))
-            elif operation == "merge_two_imfs":
+            elif operation == "merge_two_emd":
                 transform.append(TransformSignal(
-                    merge_two_imfs, transforms_args))
+                    merge_two_emd, transforms_args))
             elif operation == "mask_along_time":
                 transform.append(TransformFFT(
                     mask_along_time, transforms_args))
