@@ -12,38 +12,31 @@ from .transforms.em_decomposition import merge_two_emd
 
 
 def construct_transforms(dataset_args, transforms_args):
+    transforms_dict = {
+        "merge_two_signals": TransformSignal(
+            merge_two_signals, transforms_args),
+        "identity": TransformSignal(
+            identity, transforms_args),
+        "identity_ml": TransformSignal(
+            identity_ml, transforms_args),
+        "delay_signal": TransformSignal(
+            delay_signal, transforms_args),
+        "add_noise_to_signal": TransformSignal(
+            add_noise_to_signal, transforms_args),
+        "merge_two_emd": TransformSignal(
+            merge_two_emd, transforms_args),
+        "randaugment": TransformSignal(
+            construct_randaugment, transforms_args),
+        "mask_along_time": TransformFFT(
+            mask_along_time, transforms_args),
+        "mask_along_frequency": TransformFFT(
+            mask_along_frequency, transforms_args),
+    }
     transform_list = []
     for transform_name in dataset_args["transform_list"]:
         transform = []
         for operation in transform_name:
-            if operation == "merge_two_signals":
-                transform.append(TransformSignal(
-                    merge_two_signals, transforms_args))
-            elif operation == "identity":
-                transform.append(TransformSignal(identity, transforms_args))
-            elif operation == "identity_ml":
-                transform.append(TransformSignal(identity_ml, transforms_args))
-            elif operation == "delay_signal":
-                transform.append(TransformSignal(
-                    delay_signal, transforms_args))
-            elif operation == "add_noise_to_signal":
-                transform.append(TransformSignal(
-                    add_noise_to_signal, transforms_args))
-            elif operation == "merge_two_emd":
-                transform.append(TransformSignal(
-                    merge_two_emd, transforms_args))
-            elif operation == "randaugment":
-                transform.append(TransformSignal(
-                    construct_randaugment, transforms_args))
-            elif operation == "mask_along_time":
-                transform.append(TransformFFT(
-                    mask_along_time, transforms_args))
-            elif operation == "mask_along_frequency":
-                transform.append(TransformFFT(
-                    mask_along_frequency, transforms_args))
-            else:
-                raise ValueError(
-                    "This transform is currently not implemented")
+            transform.append(transforms_dict[operation])
         transform_list.append(transform)
     return transform_list
 

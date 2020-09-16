@@ -61,7 +61,8 @@ def main_compute(model_args_list, dataset_args_list, transforms_args,
                + dataset_args["transform_type"])
         for sample_size in sample_size_list:
             print("computing model " + key +
-                  " with sample size " + str(sample_size))
+                  " with sample size " + str(sample_size) + ".\n"
+                  "transforms_list : " + str(dataset_args["transform_list"]))
             score = compute_experimental_result(model_args,
                                                 dataset_args,
                                                 transforms_args,
