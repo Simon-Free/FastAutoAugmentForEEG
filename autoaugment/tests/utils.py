@@ -9,13 +9,14 @@ memory = Memory(cachedir, verbose=0)
 
 
 @memory.cache
-def get_dummy_sample():
+def get_dummy_sample(preprocessing=["microvolt_scaling", "filtering"]):
     train_sample, valid_sample, test_sample = get_epochs_data(
         train_subjects=[0],
         valid_subjects=[1],
         test_subjects=[2],
         recording=[1],
-        crop_wake_mins=0)
+        crop_wake_mins=0,
+        preprocessing=preprocessing)
     # for i in range(len(train_sample)):
     #     train_sample[i] = (train_sample[i][0][:50], train_sample[i][1],
     #                        train_sample[i][2])
