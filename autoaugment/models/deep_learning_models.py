@@ -30,7 +30,7 @@ def get_deep_learning_model(model_args, valid_dataset):
             sfreq=model_args["sfreq"],
             n_classes=model_args["n_classes"] + 1,
             input_size_s=model_args["input_window_samples"] /
-            model_args["sfreq"]
+            model_args["sfreq"],
         )
     else:
         raise ValueError("Boom !")
@@ -57,6 +57,8 @@ def get_deep_learning_model(model_args, valid_dataset):
                            patience=model_args["patience"]))
         ],
         device=device,
+        iterator_train__num_workers=20,
+        iterator_train__pin_memory=True
     )  # torch.in torch.out
 
     return clf

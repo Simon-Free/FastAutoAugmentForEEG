@@ -159,7 +159,7 @@ def test_noise_addition():
     datum = Datum(X=X, y=train_sample[0][1])
     datum = add_noise_to_signal.transform(datum)
     remains = (
-        datum.X - X*(1 - transforms_args["magnitude"])
+        datum.X - X
     )/transforms_args["magnitude"]
     assert_almost_equal(np.mean(remains.numpy())/scale, 0, 2)
     assert_almost_equal(np.var(remains.numpy())/(scale*scale), 1, 1)

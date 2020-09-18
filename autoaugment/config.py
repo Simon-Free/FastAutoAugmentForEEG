@@ -78,10 +78,10 @@ shallow_args = {
 
 sleepstager_args = {
     "model_type": "SleepStager",
-    "batch_size": 128,
+    "batch_size": 256,
     "seed": None,
     "sfreq": 100,
-    "lr": 0.001,
+    "lr": 0.002,
     "weight_decay": 0,
     "n_epochs": 50,
     "n_cross_val": 3,

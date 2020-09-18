@@ -10,9 +10,9 @@ mne.set_log_level("WARNING")
 
 saving_params["result_dict_name"] = "middle_result_dict"
 shallow_args["n_epochs"] = 50
-shallow_args["n_cross_val"] = 3
+shallow_args["n_cross_val"] = 5
 sleepstager_args["n_epochs"] = 50
-sleepstager_args["n_cross_val"] = 3
+sleepstager_args["n_cross_val"] = 5
 sample_size_list = [1]
 
 if __name__ == "__main__":
@@ -46,14 +46,12 @@ if __name__ == "__main__":
     train_sample, valid_sample, test_sample = get_epochs_data(
         train_subjects=range(0, 10), valid_subjects=range(10, 15),
         test_subjects=range(15, 25),
-        preprocessing=["scaling", "filtering"])
+        preprocessing=["microvolt_scaling", "filtering"])
 
-    dl_dataset_args_with_transforms["transform_list"] = [["identity"],
-                                                         ["add_noise_to_signal"],
-                                                         ["add_noise_to_signal"],
-                                                         ["add_noise_to_signal"]]
+    dl_dataset_args_with_transforms["transform_list"] = [
+        ["add_noise_to_signal"]]
 
-    for magnitude in np.linspace(0, 1, 11):
+    for magnitude in [0, 0.001, 0.01, 0.1, 1]:
         transforms_args["magnitude"] = magnitude
         dl_dataset_args_with_transforms["transform_type"] = \
             "identity, 3 gaussian noises + scaling, filtering" \

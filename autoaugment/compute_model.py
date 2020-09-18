@@ -35,8 +35,9 @@ def fit_model(model, model_args, train_dataset):
 
     return(model)
 
-
 # @memory.cache
+
+
 def get_score(clf, model_args, test_dataset):
 
     if model_args["model_type"] == "RandomForest":
