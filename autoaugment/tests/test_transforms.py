@@ -183,4 +183,5 @@ def test_randaugment():
 def test_dummy_standard_scaler_dict():
     train_sample, valid_sample, test_sample = get_dummy_sample(
         preprocessing=["standard_scaling", "filtering"])
+
     assert(True)

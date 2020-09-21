@@ -2,14 +2,15 @@
 
 import numpy as np
 from numpy.core.fromnumeric import var
-
 import torch
+
 from torch.utils.data import Subset
 from braindecode.datautil.preprocess import (
     MNEPreproc, NumpyPreproc, preprocess)
 from braindecode.datasets import SleepPhysionet
 from braindecode.datautil import create_windows_from_events
 from torch.utils.data import dataset
+from torch.utils.data.dataloader import DataLoader
 
 
 def get_epochs_data(train_subjects=tuple(range(0, 50)),
@@ -63,7 +64,7 @@ def build_epoch(subjects, recording, crop_wake_mins, preprocessing,
             preprocessors.append(NumpyPreproc(fn=lambda x: x * 1e6))
         elif "standard_scaling" in preprocessing:
             if std_train is None:
-                std, avg = compute_stats_of_train_algorithm(dataset)
+                std, avg = easy_compute_stats_of_train_algorithm(dataset)
                 preprocessors.append(NumpyPreproc(fn=lambda x: (x - avg)/std))
             else:
                 preprocessors.append(NumpyPreproc(
@@ -110,13 +111,20 @@ def create_label_index_dict(train_dataset):
     return(label_index_dict)
 
 
+def easy_compute_stats_of_train_algorithm(train_sample):
+    loader = DataLoader(train_sample, batch_size=len(
+        train_sample), num_workers=10)
+    data = next(iter(loader))
+    return(data[0].mean(), torch.sqrt(data[0].std()))
+
+
 def compute_stats_of_train_algorithm(train_sample):
     avg, n_samples, M2 = 0, 0, 0
     for i in range(len(train_sample)):
         X = train_sample[i][0]
-        new_avg = torch.mean(X)
+        new_avg = np.mean(X)
         new_n_samples = X.shape[0]*X.shape[1]
-        new_M2 = (new_n_samples - 1)*torch.var(X)
+        new_M2 = (new_n_samples - 1)*np.var(X)
         M2 = parallel_variance(n_samples, avg, M2,
                                new_n_samples, new_avg, new_M2)
         avg = (n_samples * avg + new_n_samples * new_avg) / \
