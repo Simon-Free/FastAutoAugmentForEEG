@@ -71,7 +71,7 @@ def create_transforms_and_subset(train_dataset, dataset_args, sample_size, trans
                                                       random_state=i)
     # Define everything needed to construct transforms, even if "train_subset" will be replaced
     # afterwards.
-    transforms_args["train_sample"] = train_subset
+    transforms_args["train_sample"] = train_dataset
     transforms_args["label_index_dict"] = create_label_index_dict(
         subset_aug_sample, subset_aug_labels)
     # Constructs transforms
@@ -83,7 +83,4 @@ def create_transforms_and_subset(train_dataset, dataset_args, sample_size, trans
     train_subset = Subset(
         dataset=train_dataset,
         indices=subset_aug_sample)
-    for transform in dataset_args["constructed_transform_list"]:
-        for operation in transform:
-            operation.params["train_sample"] = train_subset
     return dataset_args, train_subset

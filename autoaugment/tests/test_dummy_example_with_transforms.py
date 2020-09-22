@@ -1,3 +1,5 @@
+import cProfile
+import pstats
 import mne
 from autoaugment.tests.utils import get_dummy_sample
 from autoaugment.compute_all import main_compute
@@ -10,7 +12,9 @@ mne.set_log_level("WARNING")
 
 sample_size_list = [1]
 saving_params["file_name"] = "dummy_dict"
-hf_args["n_cross_val"] = 3
+hf_args["n_cross_val"] = 1
+shallow_args["n_cross_val"] = 1
+sleepstager_args["n_cross_val"] = 1
 shallow_args["n_epochs"] = 3
 
 
@@ -59,5 +63,13 @@ def test_dummy_sleepstagernet():
     assert(True)
 
 
+def test_cprofile_dummy_sleepstagernet():
+    cProfile.runctx('test_dummy_sleepstagernet()', globals=globals(),
+                    locals=locals(), filename="sleepstagernet")
+    p = pstats.Stats("sleepstagernet")
+    p.strip_dirs().sort_stats(-1).print_stats("autoaugment")
+    p.strip_dirs().sort_stats(-1).print_stats("braindecode")
+
+
 if __name__ == "__main__":
-    test_dummy_shallownet_with_transf()
+    test_cprofile_dummy_sleepstagernet()

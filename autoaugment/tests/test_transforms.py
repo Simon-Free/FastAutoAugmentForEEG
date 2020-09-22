@@ -171,7 +171,7 @@ def test_noise_addition():
     remains = (
         datum.X - X
     )/transforms_args["magnitude"]
-    assert_almost_equal(np.mean(remains.numpy())/scale, 0, 2)
+    assert_almost_equal(np.mean(remains.numpy())/scale, 0, 1)
     assert_almost_equal(np.var(remains.numpy())/(scale*scale), 1, 1)
 
 

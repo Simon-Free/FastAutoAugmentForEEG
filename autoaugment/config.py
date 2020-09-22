@@ -23,8 +23,9 @@ transforms_args = {
          "mask_along_frequency",
          "merge_two_signals",
          "delay_signal",
-         "add_noise_to_signal",
-         "merge_two_emd"]
+         "add_noise_to_signal"
+         #  "merge_two_emd"
+         ]
 }
 
 params_masking_random = {"mask_value": 0.0,
@@ -47,8 +48,9 @@ dl_dataset_args_with_transforms = {
                        ["mask_along_frequency", "identity"],
                        ["merge_two_signals"],
                        ["delay_signal"],
-                       ["add_noise_to_signal"],
-                       ["merge_two_emd"]],
+                       ["add_noise_to_signal"]
+                       #    ["merge_two_emd"]
+                       ],
 }
 
 hf_dataset_args_with_transforms = {
@@ -59,8 +61,9 @@ hf_dataset_args_with_transforms = {
         ["mask_along_frequency", "identity_ml"],
         ["merge_two_signals"],
         ["delay_signal"],
-        ["add_noise_to_signal"],
-        ["merge_two_emd"]]
+        ["add_noise_to_signal"]
+        # ["merge_two_emd"]
+    ]
 }
 
 shallow_args = {
