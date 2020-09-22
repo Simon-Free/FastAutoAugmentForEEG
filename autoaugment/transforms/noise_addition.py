@@ -5,9 +5,9 @@ import torch
 def add_noise_to_signal(datum, params):
 
     signal = datum.X
-    # scale = torch.mean(torch.abs(signal)).item()
-    scale = 50
+    scale = torch.mean(torch.abs(signal)).item()
     noise = torch.Tensor(np.random.normal(
         loc=0.0, scale=scale, size=signal.shape))
-    signal += params["magnitude"]*noise
+    signal = signal + params["magnitude"]*noise
+    datum.X = signal
     return datum

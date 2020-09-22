@@ -51,5 +51,5 @@ def construct_randaugment(datum, params):
     constructed_chosen_transf = construct_transforms(
         wrapped_chosen_transf, params)
     for transf in constructed_chosen_transf[0]:
-        datum = transf.transform(datum)
+        datum = transf(datum)
     return(datum)

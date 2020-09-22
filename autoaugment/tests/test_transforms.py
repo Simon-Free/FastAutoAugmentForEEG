@@ -1,3 +1,4 @@
+from operator import add
 from numpy.testing._private.utils import assert_array_equal, \
     assert_array_almost_equal
 from testfixtures import compare
@@ -12,9 +13,14 @@ from autoaugment.transforms.identity import identity
 from autoaugment.tests.utils import get_dummy_sample
 from autoaugment.transforms.masking import mask_along_axis, \
     mask_along_time
-from autoaugment.retrieve_data import create_label_index_dict
+from autoaugment.retrieve_data import create_label_index_dict, get_sample
 from autoaugment.construct_transforms import construct_transforms
 from autoaugment.config import transforms_args
+from autoaugment.transforms.em_decomposition import merge_two_emd
+from autoaugment.transforms.delaying_signal import delay_signal
+from autoaugment.transforms.signal_merging import merge_two_signals
+from autoaugment.transforms.noise_addition import add_noise_to_signal
+from autoaugment.transforms.randaugment_transform import randaugment
 
 
 def test_mask_along_axis_nonrandom():
@@ -38,13 +44,13 @@ def test_mask_along_axis_nonrandom():
     datum = Datum(X=train_sample[0][0], y=train_sample[0][1])
     datum_with_tr = Datum(X=train_sample[0][0], y=train_sample[0][1])
 
-    datum_spec = TransformFFT(identity).transform(datum)
+    datum_spec = TransformFFT(identity)(datum)
     datum_spec_with_tr = TransformFFT(
         mask_along_axis, params_masking_nonrandom_test_1
-    ).transform(datum_with_tr)
+    )(datum_with_tr)
     datum_spec_with_tr = TransformFFT(
         mask_along_axis, params_masking_nonrandom_test_2
-    ).transform(datum_spec_with_tr)
+    )(datum_spec_with_tr)
 
     img = datum_spec.X[0, :, :, 0].numpy()
     img_with_zeros = datum_with_tr.X[0, :, :, 0].numpy()
@@ -76,8 +82,8 @@ def test_data_recovery():
     train_sample, _, _ = get_dummy_sample()
     X = train_sample[0][0]
     datum = Datum(X=X, y=train_sample[0][1])
-    datum = TransformSignal(identity).transform(
-        TransformFFT(identity).transform(datum))
+    datum = TransformSignal(identity)(
+        TransformFFT(identity)(datum))
 
     assert_almost_equal(datum.X.numpy(), X, decimal=3)
 
@@ -109,11 +115,10 @@ def test_transform_construction():
 def test_delay_signal():
 
     train_sample, _, _ = get_dummy_sample()
-    transforms = {"transform_list": [["delay_signal"]]}
-    delay_signal = construct_transforms(transforms, transforms_args)[0][0]
+    transf = TransformSignal(delay_signal, transforms_args)
     X = train_sample[0][0]
     datum = Datum(X=X, y=train_sample[0][1])
-    datum = delay_signal.transform(datum)
+    datum = transf(datum)
     value_cutoff = int(np.round(transforms_args["magnitude"] * X.shape[1]))
     assert_array_equal(X[:, -value_cutoff:], datum.X[:, :value_cutoff])
     assert_array_equal(X[:, :-value_cutoff], datum.X[:, value_cutoff:])
@@ -121,43 +126,48 @@ def test_delay_signal():
 
 def test_em_decomposition():
     train_sample, _, _ = get_dummy_sample()
+    subset_aug_sample, subset_aug_labels = get_sample(train_sample,
+                                                      [["merge_two_emd"]],
+                                                      sample_size=1,
+                                                      random_state=1)
     transforms_args["train_sample"] = train_sample
-    transforms = {"transform_list": [["merge_two_emd"]]}
-    merge_two_emd = construct_transforms(transforms, transforms_args)[0][0]
     transforms_args["label_index_dict"] = create_label_index_dict(
-        transforms_args["train_sample"])
+        subset_aug_sample, subset_aug_labels)
+    transf = TransformSignal(
+        merge_two_emd,
+        transforms_args)
     X = train_sample[0][0]
     datum = Datum(X=X, y=train_sample[0][1])
-    datum = merge_two_emd.transform(datum)
+    datum = transf(datum)
     assert_array_equal(X, datum.X)
 
 
 def test_signal_addition():
     train_sample, _, _ = get_dummy_sample()
+    subset_aug_sample, subset_aug_labels = get_sample(train_sample,
+                                                      [["merge_two_signals"]],
+                                                      sample_size=1,
+                                                      random_state=1)
     transforms_args["train_sample"] = train_sample
-    transforms = {"transform_list": [["merge_two_signals"]]}
-    merge_two_signals = construct_transforms(transforms, transforms_args)[0][0]
     transforms_args["label_index_dict"] = create_label_index_dict(
-        transforms_args["train_sample"])
+        subset_aug_sample, subset_aug_labels)
+    transf = TransformSignal(
+        merge_two_signals,
+        transforms_args)
     X = train_sample[0][0]
     datum = Datum(X=X, y=train_sample[0][1])
-    datum = merge_two_signals.transform(datum)
+    datum = transf(datum)
     assert_array_almost_equal(X, datum.X, 5)
 
 
 def test_noise_addition():
-
+    transforms_args["magnitude"] = 0.1
     train_sample, _, _ = get_dummy_sample()
-    transforms_args["train_sample"] = train_sample
-    transforms = {"transform_list": [["add_noise_to_signal"]]}
-    add_noise_to_signal = construct_transforms(
-        transforms, transforms_args)[0][0]
-    transforms_args["label_index_dict"] = create_label_index_dict(
-        transforms_args["train_sample"])
+    transf = TransformSignal(add_noise_to_signal, transforms_args)
     X = train_sample[0][0]
     scale = torch.mean(torch.abs(X)).item()
     datum = Datum(X=X, y=train_sample[0][1])
-    datum = add_noise_to_signal.transform(datum)
+    datum = transf(datum)
     remains = (
         datum.X - X
     )/transforms_args["magnitude"]
@@ -168,13 +178,14 @@ def test_noise_addition():
 def test_randaugment():
 
     train_sample, _, _ = get_dummy_sample()
+    subset_aug_sample, subset_aug_labels = get_sample(train_sample,
+                                                      [["randaugment"]],
+                                                      sample_size=1,
+                                                      random_state=1)
     transforms_args["train_sample"] = train_sample
-    transforms_args["n_transf"] = 5
-    transforms = {"transform_list": [["randaugment"]]}
-    randaugment = construct_transforms(
-        transforms, transforms_args)[0][0]
     transforms_args["label_index_dict"] = create_label_index_dict(
-        transforms_args["train_sample"])
+        subset_aug_sample, subset_aug_labels)
+    transf = TransformSignal(randaugment, transforms_args)
     X = train_sample[0][0]
     datum = Datum(X=X, y=train_sample[0][1])
-    datum = randaugment.transform(datum)
+    datum = transf(datum)

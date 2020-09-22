@@ -37,11 +37,11 @@ def get_sample(train_dataset, transform_list, sample_size, random_state=None):
                  tf_list_len),
         replace=False)
     subset_aug_sample = np.array([(np.arange(i*tf_list_len, i*tf_list_len
-                                            + tf_list_len))
+                                             + tf_list_len))
                                   for i in subset_sample]).flatten()
-    subset_aug_labels = np.array([(np.full(tf_list_len, subset_sample[i][1]))
-                                 for i in subset_sample]).flatten()
-                                 
+    subset_aug_labels = np.array([(np.full(tf_list_len, train_dataset[i][1]))
+                                  for i in subset_sample]).flatten()
+
     # train_subset = Subset(
     #     dataset=train_dataset,
     #     indices=subset_aug_sample)

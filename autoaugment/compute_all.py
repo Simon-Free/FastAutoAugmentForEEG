@@ -172,7 +172,7 @@ def compute_experimental_result(model_args,
         train_dataset.transforms_list = [[TransformSignal(identity)]]
         # then, find what will be the labels of augmented data, without constructing transforms
         subset_aug_sample, subset_aug_labels = get_sample(train_dataset,
-                                                          transforms_args["transform_list"],
+                                                          dataset_args["transform_list"],
                                                           sample_size,
                                                           random_state=i)
         # Define everything needed to construct transforms, even if "train_subset" will be replaced
