@@ -42,18 +42,21 @@ if __name__ == "__main__":
     #              [dl_dataset_args, dl_dataset_args],
     #              train_sample, valid_sample, test_sample,
     #              sample_size_list, saving_params)
-
+    print("loading data...")
     train_sample, valid_sample, test_sample = get_epochs_data(
         train_subjects=range(0, 10), valid_subjects=range(10, 15),
         test_subjects=range(15, 25),
-        preprocessing=["scaling", "filtering"])
+        preprocessing=["microvolt_scaling", "filtering"])
 
+    print("data loaded !")
     for transform in ["merge_two_signals", "delay_signal", "add_noise_to_signal",
                       "merge_two_emd", "randaugment", "mask_along_time",
                       "mask_along_frequency"]:
         dl_dataset_args_with_transforms["transform_list"] = [[transform]]
 
-        for magnitude in [0, 0.01, 0.2, 0.5]:
+        for magnitude in [0.2]:
+            print("computing model, magnitude : " +
+                  str(magnitude) + ", transform : " + str(transform))
             transforms_args["magnitude"] = magnitude
             dl_dataset_args_with_transforms["transform_type"] = \
                 str(dl_dataset_args_with_transforms["transform_list"]

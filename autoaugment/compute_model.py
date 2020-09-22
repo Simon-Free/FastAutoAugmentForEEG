@@ -1,7 +1,13 @@
 import numpy as np
 from sklearn.metrics import accuracy_score
+from torch.utils.data import Subset
+from braindecode.datasets.transform_classes import TransformSignal
 from .models.deep_learning_models import get_deep_learning_model
 from .models.handcrafted_features import get_randomforest
+from .retrieve_data import get_sample
+from .transforms.identity import identity
+from .retrieve_data import create_label_index_dict
+from .construct_transforms import construct_transforms
 
 
 def initialize_model(model_args, train_sample, valid_dataset):
@@ -53,3 +59,31 @@ def get_score(clf, model_args, test_dataset):
     acc = accuracy_score(y_test, y_pred)
     # print(model_args["model_type"], " : ", str(acc))
     return(acc)
+
+
+def create_transforms_and_subset(train_dataset, dataset_args, sample_size, transforms_args, i):
+    train_subset = train_dataset
+    train_dataset.change_transform_list([[TransformSignal(identity)]])
+    # then, find what will be the labels of augmented data, without constructing transforms
+    subset_aug_sample, subset_aug_labels = get_sample(train_dataset,
+                                                      dataset_args["transform_list"],
+                                                      sample_size,
+                                                      random_state=i)
+    # Define everything needed to construct transforms, even if "train_subset" will be replaced
+    # afterwards.
+    transforms_args["train_sample"] = train_subset
+    transforms_args["label_index_dict"] = create_label_index_dict(
+        subset_aug_sample, subset_aug_labels)
+    # Constructs transforms
+    dataset_args["constructed_transform_list"] = construct_transforms(
+        dataset_args, transforms_args)
+    # Update train dataset
+    train_dataset.change_transform_list(
+        dataset_args["constructed_transform_list"])
+    train_subset = Subset(
+        dataset=train_dataset,
+        indices=subset_aug_sample)
+    for transform in dataset_args["constructed_transform_list"]:
+        for operation in transform:
+            operation.params["train_sample"] = train_subset
+    return dataset_args, train_subset

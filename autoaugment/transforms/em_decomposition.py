@@ -30,6 +30,8 @@ def get_same_shaped_imfs(signal):
         imfs_signal = emd.emd(signal.numpy(), max_imf=12)
     except AttributeError:
         imfs_signal = emd.emd(signal, max_imf=12)
+    if imfs_signal.shape[0] > 12:
+        imfs_signal = imfs_signal[:12, :]
     new_imfs = np.zeros((12, signal.shape[0]))
     new_imfs[:imfs_signal.shape[0], :] = imfs_signal
     return new_imfs
