@@ -66,6 +66,7 @@ def build_epoch(subjects, recording, crop_wake_mins, preprocessing,
             preprocessors.append(
                 MNEPreproc(fn='filter', l_freq=None, h_freq=high_cut_hz)
             )
+
         # Transform the data
         preprocess(dataset, preprocessors)
     mapping = {  # We merge stages 3 and 4 following AASM standards.

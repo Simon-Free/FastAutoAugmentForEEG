@@ -10,7 +10,7 @@ def merge_two_emd(datum, params):
     train_sample = params["train_sample"]
     label_index_dict = params["label_index_dict"]
     other_signal_index = random.choice(label_index_dict[y])
-    other_signal = train_sample[other_signal_index][0]
+    other_signal = train_sample.get_raw_data(other_signal_index)[0]
     final_signal = np.zeros(signal.shape)
     for i in range(signal.shape[0]):
         imfs_signal = get_same_shaped_imfs(signal[i])
