@@ -1,5 +1,7 @@
-import pickle
+
 import os
+import pickle
+from torch.utils.data import Subset
 
 from braindecode.datasets.transform_classes import TransformSignal
 
@@ -7,6 +9,7 @@ from .utils import update_saving_params
 from .compute_model import initialize_model, get_score, fit_model
 from .retrieve_data import get_sample
 from .transforms.randaugment_transform import randaugment
+from .transforms.identity import identity
 from .retrieve_data import create_label_index_dict
 from .construct_transforms import construct_transforms
 
@@ -161,21 +164,36 @@ def compute_experimental_result(model_args,
                                 test_dataset,
                                 sample_size):
 
-    dataset_args["constructed_transform_list"] = construct_transforms(
-        dataset_args, transforms_args)
-
+    train_subset = train_dataset
     score_list = []
 
     for i in range(model_args["n_cross_val"]):
-
-        train_subset = get_sample(train_dataset,
-                                  sample_size,
-                                  random_state=i)
-        transforms_args["label_index_dict"] = create_label_index_dict(
-            train_subset)
+        # First, initialize a raw dataset
+        train_dataset.transforms_list = [[TransformSignal(identity)]]
+        # then, find what will be the labels of augmented data, without constructing transforms
+        subset_aug_sample, subset_aug_labels = get_sample(train_dataset,
+                                                          transforms_args["transform_list"],
+                                                          sample_size,
+                                                          random_state=i)
+        # Define everything needed to construct transforms, even if "train_subset" will be replaced
+        # afterwards.
         transforms_args["train_sample"] = train_subset
+        transforms_args["label_index_dict"] = create_label_index_dict(
+            subset_aug_sample, subset_aug_labels)
+        # Constructs transforms
+        dataset_args["constructed_transform_list"] = construct_transforms(
+            dataset_args, transforms_args)
+        # Update train dataset
         train_dataset.change_transform_list(
             dataset_args["constructed_transform_list"])
+        # Construct train subset
+        train_subset = Subset(
+            dataset=train_dataset,
+            indices=subset_aug_sample)
+        # Replace train subset as the reference dataframe for the transforms
+        for transform in dataset_args["constructed_transform_list"]:
+            for operation in transform:
+                operation.params["train_sample"] = train_subset
 
         model = initialize_model(model_args, train_subset, valid_dataset)
         model = fit_model(model, model_args, train_subset)

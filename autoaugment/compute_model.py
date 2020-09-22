@@ -11,12 +11,11 @@ def initialize_model(model_args, train_sample, valid_dataset):
         model_args["n_chans"] = int(train_sample[0][0].shape[0])
         model_args["input_window_samples"] = int(train_sample[0][0].shape[1])
         clf = get_deep_learning_model(model_args, valid_dataset)
-        return clf
-    if model_args["model_type"] == "RandomForest":
+    elif model_args["model_type"] == "RandomForest":
         clf = get_randomforest(model_args)
-        return clf
     else:
         raise ValueError('Boom!!!')
+    return(clf)
 
 
 def fit_model(model, model_args, train_dataset):

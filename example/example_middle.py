@@ -12,7 +12,7 @@ saving_params["result_dict_name"] = "middle_result_dict"
 shallow_args["n_epochs"] = 50
 shallow_args["n_cross_val"] = 5
 sleepstager_args["n_epochs"] = 50
-sleepstager_args["n_cross_val"] = 5
+sleepstager_args["n_cross_val"] = 10
 sample_size_list = [1]
 
 if __name__ == "__main__":
@@ -51,10 +51,10 @@ if __name__ == "__main__":
     dl_dataset_args_with_transforms["transform_list"] = [
         ["add_noise_to_signal"]]
 
-    for magnitude in [0, 0.001, 0.01, 0.1, 1]:
+    for magnitude in [1]:
         transforms_args["magnitude"] = magnitude
-        dl_dataset_args_with_transforms["transform_type"] = \
-            "identity, 3 gaussian noises + scaling, filtering" \
+        dl_dataset_args_with_transforms["transform_type"] = "gaussian noise, "\
+            "scaling, filtering" \
             "+ magnitude : " + str(magnitude)
         main_compute([sleepstager_args], [dl_dataset_args_with_transforms],
                      transforms_args, train_sample, valid_sample, test_sample,

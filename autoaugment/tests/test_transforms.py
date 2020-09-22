@@ -83,10 +83,12 @@ def test_data_recovery():
 
 
 def test_label_index_dict_creation():
-    train_sample, _, _ = get_dummy_sample()
-    label_index_dict = create_label_index_dict(train_sample)
+    subset_aug_sample = [0, 1, 3, 4, 5]
+    subset_aug_label = [0, 0, 0, 1, 1]
+    label_index_dict = create_label_index_dict(
+        subset_aug_sample, subset_aug_label)
     assert label_index_dict == \
-        {0: [0], 1: [4], 2: [1], 3: [2], 4: [3]}
+        {0: [0, 1, 3], 1: [4, 5]}
 
 
 def test_transform_construction():
@@ -128,7 +130,6 @@ def test_em_decomposition():
     datum = Datum(X=X, y=train_sample[0][1])
     datum = merge_two_emd.transform(datum)
     assert_array_equal(X, datum.X)
-    assert_array_equal(X, datum.X)
 
 
 def test_signal_addition():
@@ -141,7 +142,6 @@ def test_signal_addition():
     X = train_sample[0][0]
     datum = Datum(X=X, y=train_sample[0][1])
     datum = merge_two_signals.transform(datum)
-    assert_array_almost_equal(X, datum.X, 5)
     assert_array_almost_equal(X, datum.X, 5)
 
 
@@ -178,10 +178,3 @@ def test_randaugment():
     X = train_sample[0][0]
     datum = Datum(X=X, y=train_sample[0][1])
     datum = randaugment.transform(datum)
-
-
-def test_dummy_standard_scaler_dict():
-    train_sample, valid_sample, test_sample = get_dummy_sample(
-        preprocessing=["standard_scaling", "filtering"])
-
-    assert(True)
