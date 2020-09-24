@@ -63,7 +63,7 @@ def test_dummy_sleepstagernet():
     assert(True)
 
 
-def test_cprofile_dummy_sleepstagernet():
+def helper_cprofile_dummy_sleepstagernet():
     cProfile.runctx('test_dummy_sleepstagernet()', globals=globals(),
                     locals=locals(), filename="sleepstagernet")
     p = pstats.Stats("sleepstagernet")
@@ -72,4 +72,4 @@ def test_cprofile_dummy_sleepstagernet():
 
 
 if __name__ == "__main__":
-    test_cprofile_dummy_sleepstagernet()
+    helper_cprofile_dummy_sleepstagernet()

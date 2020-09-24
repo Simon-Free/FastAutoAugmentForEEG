@@ -1,9 +1,8 @@
-import numpy as np
 import mne
+from numpy.core.numeric import identity
 from autoaugment.retrieve_data import get_epochs_data
 from autoaugment.compute_all import main_compute
-from autoaugment.config import dl_dataset_args, \
-    dl_dataset_args_with_transforms, \
+from autoaugment.config import dl_dataset_args_with_transforms, \
     transforms_args, \
     shallow_args, saving_params, sleepstager_args
 mne.set_log_level("WARNING")
@@ -49,18 +48,18 @@ if __name__ == "__main__":
         preprocessing=["microvolt_scaling", "filtering"])
 
     print("data loaded !")
-    for transform in ["merge_two_signals", "delay_signal", "add_noise_to_signal",
-                      "merge_two_emd", "randaugment", "mask_along_time",
-                      "mask_along_frequency"]:
-        dl_dataset_args_with_transforms["transform_list"] = [[transform]]
 
+    for transform in ["randaugment", "mask_along_time",
+                      "mask_along_frequency"]:
+        dl_dataset_args_with_transforms["transform_list"] = [
+            [transform, "identity"]]
         for magnitude in [0.2]:
             print("computing model, magnitude : " +
                   str(magnitude) + ", transform : " + str(transform))
             transforms_args["magnitude"] = magnitude
             dl_dataset_args_with_transforms["transform_type"] = \
-                str(dl_dataset_args_with_transforms["transform_list"]
-                    ) + "scaling, filtering" + "+ magnitude : " + str(magnitude)
+                str(transform) + "scaling, filtering" + \
+                "+ magnitude : " + str(magnitude)
             main_compute([sleepstager_args], [dl_dataset_args_with_transforms],
                          transforms_args, train_sample, valid_sample, test_sample,
                          sample_size_list, saving_params)

@@ -148,8 +148,9 @@ def main_compute_with_randaugment(
                 result_dict[key] = {}
             result_dict[key][sample_size] = dict_score
 
-    with open(result_dict_path, 'wb') as handle:
-        pickle.dump(result_dict, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            with open(result_dict_path, 'wb') as handle:
+                pickle.dump(result_dict, handle,
+                            protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def compute_experimental_result(model_args,
