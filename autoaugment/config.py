@@ -25,7 +25,9 @@ transforms_args = {
          "delay_signal",
          "add_noise_to_signal"
          #  "merge_two_emd"
-         ]
+         ],
+    "magnitude_list": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
+    "max_n_transf": 5
 }
 
 params_masking_random = {"mask_value": 0.0,

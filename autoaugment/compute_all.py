@@ -78,7 +78,8 @@ def main_compute(model_args_list, dataset_args_list, transforms_args,
 
 
 def main_compute_with_randaugment(
-        model_args_list, dataset_args_list, train_dataset,
+        model_args_list, dataset_args_list, transforms_args,
+        train_dataset,
         valid_dataset, test_dataset, sample_size_list, saving_params):
     """
     Train every models given in entry, on their associated dataset.
@@ -129,15 +130,15 @@ def main_compute_with_randaugment(
             print("computing model " + key +
                   " with sample size " + str(sample_size))
             dict_score = {}
-            for magnitude in model_args["magnitude_list"]:
-                for n_transf in range(model_args["max_n_transf"]):
-                    model_args["magnitude"] = magnitude
-                    model_args["n_transf"] = n_transf
-                    dataset_args["transform_list"] = TransformSignal(
-                        randaugment)
+            for magnitude in transforms_args["magnitude_list"]:
+                for n_transf in range(transforms_args["max_n_transf"]):
+                    transforms_args["magnitude"] = magnitude
+                    transforms_args["n_transf"] = n_transf
+                    dataset_args["transform_list"] = [["randaugment"]]
                     score = compute_experimental_result(
                         model_args,
                         dataset_args,
+                        transforms_args,
                         train_dataset,
                         valid_dataset,
                         test_dataset,

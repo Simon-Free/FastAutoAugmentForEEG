@@ -1,15 +1,15 @@
 import mne
 from numpy.core.numeric import identity
 from autoaugment.retrieve_data import get_epochs_data
-from autoaugment.compute_all import main_compute
+from autoaugment.compute_all import main_compute, main_compute_with_randaugment
 from autoaugment.config import dl_dataset_args_with_transforms, \
     transforms_args, \
     shallow_args, saving_params, sleepstager_args
 mne.set_log_level("WARNING")
 
-saving_params["result_dict_name"] = "middle_result_dict"
+saving_params["result_dict_name"] = "randaugment_dict"
 shallow_args["n_epochs"] = 50
-shallow_args["n_cross_val"] = 3
+shallow_args["n_cross_val"] = 10
 sleepstager_args["n_epochs"] = 50
 sleepstager_args["n_cross_val"] = 10
 sample_size_list = [1]
@@ -49,23 +49,9 @@ if __name__ == "__main__":
 
     print("data loaded !")
 
-    for transform in ["identity",
-                      "merge_two_signals",
-                      "delay_signal",
-                      "mask_along_time",
-                      "mask_along_frequency"]:
-        dl_dataset_args_with_transforms["transform_list"] = [
-            [transform, "identity"]]
-        for magnitude in [0, 0.1, 0.2, 0.4, 0.6, 0.8]:
-            print("computing model, magnitude : " +
-                  str(magnitude) + ", transform : " + str(transform))
-            transforms_args["magnitude"] = magnitude
-            dl_dataset_args_with_transforms["transform_type"] = \
-                str(transform) + "scaling, filtering" + \
-                "+ magnitude : " + str(magnitude)
-            main_compute([sleepstager_args], [dl_dataset_args_with_transforms],
-                         transforms_args, train_sample, valid_sample, test_sample,
-                         sample_size_list, saving_params)
+    main_compute_with_randaugment([sleepstager_args], [dl_dataset_args_with_transforms],
+                                  transforms_args, train_sample, valid_sample, test_sample,
+                                  sample_size_list, saving_params)
 
     # dl_dataset_args["transform_type"] = "raw (no transforms)" \
     #     "+ scaling, filtering"
