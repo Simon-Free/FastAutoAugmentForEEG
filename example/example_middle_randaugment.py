@@ -13,6 +13,7 @@ shallow_args["n_cross_val"] = 10
 sleepstager_args["n_epochs"] = 50
 sleepstager_args["n_cross_val"] = 10
 sample_size_list = [1]
+sleepstager_args["device"] = "cuda:1"
 
 if __name__ == "__main__":
 
