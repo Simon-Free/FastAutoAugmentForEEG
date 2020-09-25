@@ -4,7 +4,8 @@ from braindecode.datasets.transform_classes import TransformSignal, \
 
 from .transforms.signal_merging import merge_two_signals
 from .transforms.delaying_signal import delay_signal
-from .transforms.noise_addition import add_noise_to_signal
+from .transforms.noise_addition import add_noise_to_signal, \
+    add_noise_to_signal_only_one_signal, add_noise_to_signal_with_proba
 from .transforms.masking import mask_along_time, \
     mask_along_frequency
 from .transforms.identity import identity, identity_ml
@@ -23,6 +24,10 @@ def construct_transforms(dataset_args, transforms_args):
             delay_signal, transforms_args),
         "add_noise_to_signal": TransformSignal(
             add_noise_to_signal, transforms_args),
+        "add_noise_to_signal_only_one_signal": TransformSignal(
+            add_noise_to_signal_only_one_signal, transforms_args),
+        "add_noise_to_signal_with_proba": TransformSignal(
+            add_noise_to_signal_with_proba, transforms_args),
         "merge_two_emd": TransformSignal(
             merge_two_emd, transforms_args),
         "randaugment": TransformSignal(

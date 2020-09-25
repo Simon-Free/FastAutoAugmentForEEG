@@ -7,8 +7,9 @@ def delay_signal(datum, params):
     signal = datum.X
     new_signal = torch.zeros(signal.shape)
     value_magnitude = int(np.round(params["magnitude"] * signal.shape[1]))
-    new_signal[:, :value_magnitude] = signal[:, -value_magnitude:]
-    new_signal[:, value_magnitude:] = signal[:, :-value_magnitude]
+    if value_magnitude != 0:
+        new_signal[:, :value_magnitude] = signal[:, -value_magnitude:]
+        new_signal[:, value_magnitude:] = signal[:, :-value_magnitude]
     datum.X = new_signal
 
     return datum

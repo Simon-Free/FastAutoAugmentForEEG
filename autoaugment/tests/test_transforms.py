@@ -2,6 +2,8 @@ from operator import add
 from numpy.testing._private.utils import assert_array_equal, \
     assert_array_almost_equal
 from testfixtures import compare
+import random
+
 import numpy as np
 import torch
 from numpy.testing import assert_almost_equal
@@ -19,7 +21,8 @@ from autoaugment.config import transforms_args
 from autoaugment.transforms.em_decomposition import merge_two_emd
 from autoaugment.transforms.delaying_signal import delay_signal
 from autoaugment.transforms.signal_merging import merge_two_signals
-from autoaugment.transforms.noise_addition import add_noise_to_signal
+from autoaugment.transforms.noise_addition import add_noise_to_signal, \
+    add_noise_to_signal_with_proba, add_noise_to_signal_only_one_signal
 from autoaugment.transforms.randaugment_transform import randaugment
 
 
@@ -170,7 +173,7 @@ def test_noise_addition():
     datum = transf(datum)
     remains = (
         datum.X - X
-    )/transforms_args["magnitude"]
+    )/(transforms_args["magnitude"]*0.1)
     assert_almost_equal(np.mean(remains.numpy())/scale, 0, 1)
     assert_almost_equal(np.var(remains.numpy())/(scale*scale), 1, 1)
 
@@ -189,3 +192,41 @@ def test_randaugment():
     X = train_sample[0][0]
     datum = Datum(X=X, y=train_sample[0][1])
     datum = transf(datum)
+
+
+def test_add_noise_to_signal_with_proba():
+    transforms_args["magnitude"] = 0.1
+    train_sample, _, _ = get_dummy_sample()
+    transf = TransformSignal(add_noise_to_signal_with_proba, transforms_args)
+    random.seed(1)  # returns 0.13
+    X = train_sample[0][0]
+    datum = Datum(X=X, y=train_sample[0][1])
+    datum = transf(datum)
+    assert_almost_equal(datum.X.numpy(), X)
+    random.seed(0)  # return 0.88
+    datum = transf(datum)
+    scale = torch.mean(torch.abs(X)).item()
+    remains = (
+        datum.X - X
+    )/(transforms_args["magnitude"]*0.1)
+    assert_almost_equal(np.mean(remains.numpy())/scale, 0, 1)
+    assert_almost_equal(np.var(remains.numpy())/(scale*scale), 1, 1)
+
+
+def test_add_noise_to_signal_only_one_signal():
+    transforms_args["magnitude"] = 0.1
+    train_sample, _, _ = get_dummy_sample()
+    transf = TransformSignal(
+        add_noise_to_signal_only_one_signal, transforms_args)
+
+    random.seed(1)  # returns 0.1
+    X = train_sample[0][0]
+    datum = Datum(X=X, y=train_sample[0][1])
+    datum = transf(datum)
+    assert_almost_equal(datum.X[1, :].numpy(), X[1, :])
+
+    random.seed(0)  # returns 0.8
+    X = train_sample[0][0]
+    datum = Datum(X=X, y=train_sample[0][1])
+    datum = transf(datum)
+    assert_almost_equal(datum.X[0, :].numpy(), X[0, :])
