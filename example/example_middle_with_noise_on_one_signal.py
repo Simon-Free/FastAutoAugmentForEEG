@@ -8,7 +8,7 @@ from autoaugment.config import dl_dataset_args, \
     shallow_args, saving_params, sleepstager_args
 mne.set_log_level("WARNING")
 
-saving_params["result_dict_name"] = "denoising_result_dict"
+saving_params["result_dict_name"] = "denoising_result_dict_only_one_signal"
 shallow_args["n_epochs"] = 50
 shallow_args["n_cross_val"] = 5
 sleepstager_args["n_epochs"] = 50
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     dl_dataset_args_with_transforms["transform_list"] = [
         ["add_noise_to_signal_only_one_signal"]]
 
-    for magnitude in [0, 0.2, 0.4, 0, 6, 0.8, 1, 2, 3]:
+    for magnitude in [0, 0.2, 0.4, 0.6, 0.8, 1, 2, 3]:
         transforms_args["magnitude"] = magnitude
         dl_dataset_args_with_transforms["transform_type"] = "gaussian noise, "\
             "scaling, filtering" \

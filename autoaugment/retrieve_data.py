@@ -11,10 +11,20 @@ from braindecode.datasets import SleepPhysionet
 from braindecode.datautil import create_windows_from_events
 
 
-def get_epochs_data(train_subjects=tuple(range(0, 50)),
+def get_epochs_data(num_train=None, num_test=None, num_valid=None,
+                    train_subjects=tuple(range(0, 50)),
                     valid_subjects=tuple(range(50, 60)),
                     test_subjects=tuple(range(60, 83)), recording=[1, 2],
-                    preprocessing=["microvolt_scaling", "filtering", "standard_scaling"], crop_wake_mins=30):
+                    preprocessing=["microvolt_scaling", "filtering"], crop_wake_mins=30,
+                    random_seed=None):
+
+    if num_train is not None:
+        np.random_seed(random_seed)
+        rand_sub = np.random.choice(
+            tuple(range(83)), size=num_train+num_test+num_valid, replace=True, p=None)
+        train_subjects = rand_sub[:num_train]
+        test_subjects = rand_sub[num_train:num_train+num_test]
+        valid_subjects = rand_sub[num_train+num_test:]
 
     train_sample = build_epoch(
         train_subjects, recording, crop_wake_mins, preprocessing)

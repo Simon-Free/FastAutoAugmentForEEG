@@ -58,12 +58,15 @@ dl_dataset_args_with_transforms = {
 hf_dataset_args_with_transforms = {
     "transform_type": "included masking transforms",
     "transform_list": [
+
         ["identity_ml"],
         ["mask_along_time", "identity_ml"],
         ["mask_along_frequency", "identity_ml"],
         ["merge_two_signals"],
         ["delay_signal"],
-        ["add_noise_to_signal"]
+        ["add_noise_to_signal"],
+        ['add_noise_to_signal_only_one_signal'],
+        ['add_noise_to_signal_with_proba']
         # ["merge_two_emd"]
     ]
 }

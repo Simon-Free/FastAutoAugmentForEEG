@@ -11,10 +11,10 @@ mne.set_log_level("WARNING")
 
 
 sample_size_list = [1]
-saving_params["file_name"] = "dummy_dict"
+saving_params["file_name"] = "dummy2_dict"
 hf_args["n_cross_val"] = 1
-shallow_args["n_cross_val"] = 1
-sleepstager_args["n_cross_val"] = 1
+shallow_args["n_cross_val"] = 3
+sleepstager_args["n_cross_val"] = 3
 shallow_args["n_epochs"] = 3
 
 

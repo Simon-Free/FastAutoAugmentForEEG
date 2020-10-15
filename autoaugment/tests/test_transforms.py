@@ -1,5 +1,5 @@
 from operator import add
-from numpy.testing._private.utils import assert_array_equal, \
+from numpy.testing import assert_array_equal, \
     assert_array_almost_equal
 from testfixtures import compare
 import random
